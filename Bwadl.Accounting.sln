@@ -3,19 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.API", "src\Bwadl.API\Bwadl.API.csproj", "{36FDC3B9-5CBC-4816-A62E-8D2618AACA2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.API", "src\Bwadl.Accounting.API\Bwadl.Accounting.API.csproj", "{36FDC3B9-5CBC-4816-A62E-8D2618AACA2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Application", "src\Bwadl.Application\Bwadl.Application.csproj", "{30B5FA0C-F256-4453-BCF6-568B7ADE4E07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Application", "src\Bwadl.Accounting.Application\Bwadl.Accounting.Application.csproj", "{30B5FA0C-F256-4453-BCF6-568B7ADE4E07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Domain", "src\Bwadl.Domain\Bwadl.Domain.csproj", "{BA1D3194-A4AF-4892-B7E3-50E125918AFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Domain", "src\Bwadl.Accounting.Domain\Bwadl.Accounting.Domain.csproj", "{BA1D3194-A4AF-4892-B7E3-50E125918AFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Infrastructure", "src\Bwadl.Infrastructure\Bwadl.Infrastructure.csproj", "{6B9DBC10-BCC6-447F-90AB-9F5511955CBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Infrastructure", "src\Bwadl.Accounting.Infrastructure\Bwadl.Accounting.Infrastructure.csproj", "{6B9DBC10-BCC6-447F-90AB-9F5511955CBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Shared", "src\Bwadl.Shared\Bwadl.Shared.csproj", "{80B96378-2873-4171-B4ED-113ECD933D92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Shared", "src\Bwadl.Accounting.Shared\Bwadl.Accounting.Shared.csproj", "{80B96378-2873-4171-B4ED-113ECD933D92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Tests.Integration", "tests\Bwadl.Tests.Integration\Bwadl.Tests.Integration.csproj", "{B2E753D8-73FF-4518-A3E8-32566FE2BEAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Tests.Integration", "tests\Bwadl.Accounting.Tests.Integration\Bwadl.Accounting.Tests.Integration.csproj", "{B2E753D8-73FF-4518-A3E8-32566FE2BEAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Tests.Unit", "tests\Bwadl.Tests.Unit\Bwadl.Tests.Unit.csproj", "{18C28F3F-E1D0-4394-97D6-A3402CA48E1F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwadl.Accounting.Tests.Unit", "tests\Bwadl.Accounting.Tests.Unit\Bwadl.Accounting.Tests.Unit.csproj", "{18C28F3F-E1D0-4394-97D6-A3402CA48E1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

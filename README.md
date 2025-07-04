@@ -1,8 +1,8 @@
-# Bwadl - Enterprise .NET Clean Architecture Solution
+# Bwadl.Accounting - Enterprise .NET Clean Architecture Solution
 
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/yourusername/bwadl)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/yourusername/bwadl.accounting)
 
 A comprehensive enterprise-grade .NET solution demonstrating **Clean Architecture (Onion Architecture)** principles with modern patterns and practices.
 
@@ -68,12 +68,12 @@ This solution implements Clean Architecture with clear separation of concerns ac
 ```
 Bwadl/
 ├── src/
-│   ├── Bwadl.API/                 # Web API layer
+│   ├── Bwadl.Accounting.API/                 # Web API layer
 │   │   ├── Controllers/           # API controllers
 │   │   ├── Middleware/            # Custom middleware
 │   │   ├── Configuration/         # API configuration
 │   │   └── Models/               # Request/Response models
-│   ├── Bwadl.Application/        # Application services layer
+│   ├── Bwadl.Accounting.Application/        # Application services layer
 │   │   ├── Features/             # Use cases (Commands/Queries)
 │   │   ├── Common/               # Shared application logic
 │   │   │   ├── Behaviors/        # MediatR pipeline behaviors
@@ -81,22 +81,22 @@ Bwadl/
 │   │   │   ├── DTOs/            # Data transfer objects
 │   │   │   └── Mappings/        # AutoMapper profiles
 │   │   └── Validators/           # FluentValidation validators
-│   ├── Bwadl.Domain/            # Domain entities and business logic
+│   ├── Bwadl.Accounting.Domain/            # Domain entities and business logic
 │   │   ├── Entities/            # Domain entities
 │   │   ├── ValueObjects/        # Value objects
 │   │   ├── Events/              # Domain events
 │   │   ├── Interfaces/          # Domain interfaces
 │   │   └── Exceptions/          # Domain exceptions
-│   ├── Bwadl.Infrastructure/     # Infrastructure services
+│   ├── Bwadl.Accounting.Infrastructure/     # Infrastructure services
 │   │   ├── Data/                # Data access implementations
 │   │   ├── Caching/             # Caching implementations
 │   │   ├── Messaging/           # Message bus implementations
 │   │   ├── ExternalServices/    # External API integrations
 │   │   └── Security/            # Security implementations
-│   └── Bwadl.Shared/            # Shared utilities
+│   └── Bwadl.Accounting.Shared/            # Shared utilities
 ├── tests/
-│   ├── Bwadl.Tests.Unit/        # Unit tests
-│   └── Bwadl.Tests.Integration/ # Integration tests
+│   ├── Bwadl.Accounting.Tests.Unit/        # Unit tests
+│   └── Bwadl.Accounting.Tests.Integration/ # Integration tests
 ├── docs/                        # Documentation
 ├── infrastructure/              # Deployment and infrastructure
 └── tools/                       # Development tools

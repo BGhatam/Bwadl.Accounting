@@ -26,10 +26,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Bwadl.Domain.Entities;
+using Bwadl.Accounting.Domain.Entities;
 
 // 2. Namespace
-namespace Bwadl.Application.Features.Users;
+namespace Bwadl.Accounting.Application.Features.Users;
 
 // 3. Class with proper access modifiers
 public sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>

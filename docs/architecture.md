@@ -38,7 +38,7 @@ The solution follows Uncle Bob's Clean Architecture with four distinct layers:
 
 ## Project Structure
 
-### Bwadl.API
+### Bwadl.Accounting.API
 - **Purpose**: Web API layer, entry point for HTTP requests
 - **Responsibilities**:
   - HTTP request handling
@@ -53,7 +53,7 @@ The solution follows Uncle Bob's Clean Architecture with four distinct layers:
   - Configuration (API versioning, Swagger, Health checks)
   - Filters and Extensions
 
-### Bwadl.Application
+### Bwadl.Accounting.Application
 - **Purpose**: Business logic orchestration layer
 - **Responsibilities**:
   - Use case implementation
@@ -66,7 +66,7 @@ The solution follows Uncle Bob's Clean Architecture with four distinct layers:
   - DTOs and Mappings
   - Validators (FluentValidation)
 
-### Bwadl.Domain
+### Bwadl.Accounting.Domain
 - **Purpose**: Core business domain layer
 - **Responsibilities**:
   - Business entities
@@ -80,7 +80,7 @@ The solution follows Uncle Bob's Clean Architecture with four distinct layers:
   - Domain Exceptions
   - Business Interfaces
 
-### Bwadl.Infrastructure
+### Bwadl.Accounting.Infrastructure
 - **Purpose**: External service integration layer
 - **Responsibilities**:
   - Data persistence
@@ -97,7 +97,7 @@ The solution follows Uncle Bob's Clean Architecture with four distinct layers:
   - Monitoring (Metrics, Tracing)
   - Resilience (Retry policies, Circuit breakers)
 
-### Bwadl.Shared
+### Bwadl.Accounting.Shared
 - **Purpose**: Shared utilities and configurations
 - **Responsibilities**:
   - Common configuration classes

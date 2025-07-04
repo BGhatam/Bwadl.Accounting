@@ -216,16 +216,16 @@ dotnet test tests/Bwadl.Tests.Integration
 ## Project Structure Overview
 
 ```
-Bwadl/
+Bwadl.Accounting/
 ├── src/
-│   ├── Bwadl.API/           # Web API layer
-│   ├── Bwadl.Application/   # Business logic layer
-│   ├── Bwadl.Domain/        # Domain entities and rules
-│   ├── Bwadl.Infrastructure/# Data access and external services
-│   └── Bwadl.Shared/        # Shared utilities and configurations
+│   ├── Bwadl.Accounting.API/           # Web API layer
+│   ├── Bwadl.Accounting.Application/   # Business logic layer
+│   ├── Bwadl.Accounting.Domain/        # Domain entities and rules
+│   ├── Bwadl.Accounting.Infrastructure/# Data access and external services
+│   └── Bwadl.Accounting.Shared/        # Shared utilities and configurations
 ├── tests/
-│   ├── Bwadl.Tests.Unit/    # Unit tests
-│   └── Bwadl.Tests.Integration/ # Integration tests
+│   ├── Bwadl.Accounting.Tests.Unit/    # Unit tests
+│   └── Bwadl.Accounting.Tests.Integration/ # Integration tests
 ├── docs/                    # Documentation
 ├── infrastructure/          # Deployment scripts and configurations
 └── tools/                   # Development tools and scripts

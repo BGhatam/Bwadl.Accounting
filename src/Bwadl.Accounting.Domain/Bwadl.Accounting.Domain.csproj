@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Bwadl.Accounting.Domain</AssemblyName>
+    <RootNamespace>Bwadl.Accounting.Domain</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bwadl.Accounting.Shared\Bwadl.Accounting.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
