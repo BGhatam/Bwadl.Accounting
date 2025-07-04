@@ -35,9 +35,20 @@ public class UsersController : ControllerBase
         
         var response = users.Select(user => new UserResponse(
             user.Id,
-            user.Name,
             user.Email,
-            user.Type,
+            user.MobileNumber,
+            user.MobileCountryCode,
+            user.IdentityId,
+            user.IdentityType,
+            user.NameEn,
+            user.NameAr,
+            user.Language,
+            user.IsEmailVerified,
+            user.IsMobileVerified,
+            user.IsUserVerified,
+            user.EmailVerifiedAt,
+            user.MobileVerifiedAt,
+            user.UserVerifiedAt,
             user.CreatedAt,
             user.UpdatedAt
         ));
@@ -47,8 +58,8 @@ public class UsersController : ControllerBase
         return Ok(userList);
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<UserResponse>> GetUser(Guid id, CancellationToken cancellationToken)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<UserResponse>> GetUser(int id, CancellationToken cancellationToken)
     {
         _logger.LogInformation("GET /api/users/{UserId} - Retrieving user by ID", id);
 
@@ -63,9 +74,20 @@ public class UsersController : ControllerBase
 
         var response = new UserResponse(
             user.Id,
-            user.Name,
             user.Email,
-            user.Type,
+            user.MobileNumber,
+            user.MobileCountryCode,
+            user.IdentityId,
+            user.IdentityType,
+            user.NameEn,
+            user.NameAr,
+            user.Language,
+            user.IsEmailVerified,
+            user.IsMobileVerified,
+            user.IsUserVerified,
+            user.EmailVerifiedAt,
+            user.MobileVerifiedAt,
+            user.UserVerifiedAt,
             user.CreatedAt,
             user.UpdatedAt
         );
@@ -79,14 +101,35 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var command = new CreateUserCommand(request.Name, request.Email, request.Type);
+            var command = new CreateUserCommand(
+                request.Email,
+                request.MobileNumber,
+                request.MobileCountryCode,
+                request.IdentityId,
+                request.IdentityType,
+                request.NameEn,
+                request.NameAr,
+                request.Language,
+                request.Password
+            );
             var user = await _mediator.Send(command, cancellationToken);
 
             var response = new UserResponse(
                 user.Id,
-                user.Name,
                 user.Email,
-                user.Type,
+                user.MobileNumber,
+                user.MobileCountryCode,
+                user.IdentityId,
+                user.IdentityType,
+                user.NameEn,
+                user.NameAr,
+                user.Language,
+                user.IsEmailVerified,
+                user.IsMobileVerified,
+                user.IsUserVerified,
+                user.EmailVerifiedAt,
+                user.MobileVerifiedAt,
+                user.UserVerifiedAt,
                 user.CreatedAt,
                 user.UpdatedAt
             );
@@ -101,21 +144,42 @@ public class UsersController : ControllerBase
         }
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult<UserResponse>> UpdateUser(Guid id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<UserResponse>> UpdateUser(int id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("PUT /api/users/{UserId} - Updating user", id);
 
         try
         {
-            var command = new UpdateUserCommand(id, request.Name, request.Email, request.Type);
+            var command = new UpdateUserCommand(
+                id,
+                request.Email,
+                request.MobileNumber,
+                request.MobileCountryCode,
+                request.IdentityId,
+                request.IdentityType,
+                request.NameEn,
+                request.NameAr,
+                request.Language
+            );
             var user = await _mediator.Send(command, cancellationToken);
 
             var response = new UserResponse(
                 user.Id,
-                user.Name,
                 user.Email,
-                user.Type,
+                user.MobileNumber,
+                user.MobileCountryCode,
+                user.IdentityId,
+                user.IdentityType,
+                user.NameEn,
+                user.NameAr,
+                user.Language,
+                user.IsEmailVerified,
+                user.IsMobileVerified,
+                user.IsUserVerified,
+                user.EmailVerifiedAt,
+                user.MobileVerifiedAt,
+                user.UserVerifiedAt,
                 user.CreatedAt,
                 user.UpdatedAt
             );
@@ -135,8 +199,8 @@ public class UsersController : ControllerBase
         }
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteUser(Guid id, CancellationToken cancellationToken)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteUser(int id, CancellationToken cancellationToken)
     {
         _logger.LogInformation("DELETE /api/users/{UserId} - Deleting user", id);
 
@@ -154,5 +218,4 @@ public class UsersController : ControllerBase
             return NotFound(ex.Message);
         }
     }
-
 }

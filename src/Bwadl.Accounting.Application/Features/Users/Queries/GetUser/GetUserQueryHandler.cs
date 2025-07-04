@@ -31,7 +31,7 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDto?>
             return null;
         }
 
-        _logger.LogInformation("User found with ID: {UserId}, Name: {Name}", user.Id, user.Name);
+        _logger.LogInformation("User found with ID: {UserId}, Display Name: {DisplayName}", user.Id, user.GetDisplayName());
         return _mapper.Map<UserDto>(user);
     }
 }

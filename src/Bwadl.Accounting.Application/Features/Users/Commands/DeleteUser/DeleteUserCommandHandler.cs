@@ -20,14 +20,15 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
     {
         _logger.LogInformation("Starting user deletion for ID: {UserId}", request.Id);
 
-        if (!await _userRepository.ExistsAsync(request.Id, cancellationToken))
+        var user = await _userRepository.GetByIdAsync(request.Id, cancellationToken);
+        if (user == null)
         {
             _logger.LogWarning("User deletion failed - user not found with ID: {UserId}", request.Id);
-            throw new UserNotFoundException(request.Id);
+            throw new UserNotFoundException(request.Id.ToString());
         }
 
         _logger.LogInformation("Deleting user with ID: {UserId}", request.Id);
-        await _userRepository.DeleteAsync(request.Id, cancellationToken);
+        await _userRepository.DeleteAsync(user, cancellationToken);
         
         _logger.LogInformation("User {UserId} deleted successfully", request.Id);
     }

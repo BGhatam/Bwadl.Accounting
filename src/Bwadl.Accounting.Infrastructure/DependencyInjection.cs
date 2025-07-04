@@ -2,11 +2,14 @@ using Bwadl.Accounting.Application.Common.Interfaces;
 using Bwadl.Accounting.Domain.Interfaces;
 using Bwadl.Accounting.Infrastructure.Caching;
 using Bwadl.Accounting.Infrastructure.Configuration;
-using Bwadl.Accounting.Infrastructure.Data.Repositories;
+using Bwadl.Accounting.Infrastructure.Data;
 using Bwadl.Accounting.Infrastructure.ExternalServices;
 using Bwadl.Accounting.Infrastructure.Extensions;
 using Bwadl.Accounting.Infrastructure.Messaging;
+using Bwadl.Accounting.Infrastructure.Repositories;
 using Bwadl.Accounting.Infrastructure.Security;
+using Bwadl.Accounting.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -23,8 +26,41 @@ public static class DependencyInjection
         // Configuration Services
         services.AddConfigurationServices(configuration);
 
+        // Database
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                logger.Warning("No database connection string found, using in-memory database");
+                options.UseInMemoryDatabase("BwadlAccountingDb");
+            }
+            else
+            {
+                logger.Information("Using PostgreSQL database");
+                options.UseNpgsql(connectionString, npgsqlOptions =>
+                {
+                    npgsqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
+                });
+            }
+
+            // Enable sensitive data logging in development
+            if (configuration.GetValue<bool>("Logging:EnableSensitiveDataLogging"))
+            {
+                options.EnableSensitiveDataLogging();
+            }
+        });
+
+        // Current User Service
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+
         // Repositories
-        services.AddSingleton<IUserRepository, InMemoryUserRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+        
+        // Domain Services
+        services.AddScoped<IPasswordService, PasswordService>();
         
         // External Services
         services.AddHttpClient<IEmailService, EnhancedEmailService>();

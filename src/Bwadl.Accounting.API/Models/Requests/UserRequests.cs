@@ -1,26 +1,58 @@
-using Bwadl.Accounting.Domain.ValueObjects;
 using System.ComponentModel.DataAnnotations;
 
 namespace Bwadl.Accounting.API.Models.Requests;
 
 public record CreateUserRequest(
-    [Required][StringLength(100, MinimumLength = 1)]
-    string Name,
+    [EmailAddress][StringLength(255)]
+    string? Email,
     
-    [Required][EmailAddress][StringLength(255)]
-    string Email,
+    [StringLength(20)]
+    string? MobileNumber,
     
-    [Required]
-    UserType Type
+    [StringLength(10)]
+    string? MobileCountryCode,
+    
+    [StringLength(50)]
+    string? IdentityId,
+    
+    [StringLength(10)]
+    string? IdentityType,
+    
+    [StringLength(255)]
+    string? NameEn,
+    
+    [StringLength(255)]
+    string? NameAr,
+    
+    [StringLength(2)]
+    string? Language,
+    
+    [StringLength(100)]
+    string? Password
 );
 
 public record UpdateUserRequest(
-    [Required][StringLength(100, MinimumLength = 1)]
-    string Name,
+    [EmailAddress][StringLength(255)]
+    string? Email,
     
-    [Required][EmailAddress][StringLength(255)]
-    string Email,
+    [StringLength(20)]
+    string? MobileNumber,
     
-    [Required]
-    UserType Type
+    [StringLength(10)]
+    string? MobileCountryCode,
+    
+    [StringLength(50)]
+    string? IdentityId,
+    
+    [StringLength(10)]
+    string? IdentityType,
+    
+    [StringLength(255)]
+    string? NameEn,
+    
+    [StringLength(255)]
+    string? NameAr,
+    
+    [StringLength(2)]
+    string? Language
 );

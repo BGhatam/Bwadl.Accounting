@@ -1,0 +1,112 @@
+### Currency API Tests for Bwadl.Accounting
+
+@baseUrl = https://localhost:7001
+
+### Get all current versions of currencies
+GET {{baseUrl}}/api/currencies
+Accept: application/json
+
+###
+
+### Create a new currency - USD
+POST {{baseUrl}}/api/currencies
+Content-Type: application/json
+
+{
+  "currencyCode": "USD",
+  "currencyName": "US Dollar",
+  "decimalPlaces": 2
+}
+
+###
+
+### Create a new currency - EUR
+POST {{baseUrl}}/api/currencies
+Content-Type: application/json
+
+{
+  "currencyCode": "EUR",
+  "currencyName": "Euro",
+  "decimalPlaces": 2
+}
+
+###
+
+### Create a new currency - JPY (no decimal places)
+POST {{baseUrl}}/api/currencies
+Content-Type: application/json
+
+{
+  "currencyCode": "JPY",
+  "currencyName": "Japanese Yen",
+  "decimalPlaces": 0
+}
+
+###
+
+### Get current version of USD
+GET {{baseUrl}}/api/currencies/USD
+Accept: application/json
+
+###
+
+### Get all versions of USD
+GET {{baseUrl}}/api/currencies/USD/versions
+Accept: application/json
+
+###
+
+### Update USD currency (creates new version)
+PUT {{baseUrl}}/api/currencies/USD
+Content-Type: application/json
+
+{
+  "currencyName": "United States Dollar",
+  "decimalPlaces": 2
+}
+
+###
+
+### Get all versions of USD after update
+GET {{baseUrl}}/api/currencies/USD/versions
+Accept: application/json
+
+###
+
+### Check if currency exists - USD
+HEAD {{baseUrl}}/api/currencies/USD
+
+###
+
+### Check if currency exists - GBP (doesn't exist)
+HEAD {{baseUrl}}/api/currencies/GBP
+
+###
+
+### Try to create duplicate currency (should fail)
+POST {{baseUrl}}/api/currencies
+Content-Type: application/json
+
+{
+  "currencyCode": "USD",
+  "currencyName": "US Dollar Duplicate",
+  "decimalPlaces": 2
+}
+
+###
+
+### Try to create invalid currency (should fail validation)
+POST {{baseUrl}}/api/currencies
+Content-Type: application/json
+
+{
+  "currencyCode": "INVALID",
+  "currencyName": "",
+  "decimalPlaces": -1
+}
+
+###
+
+### Get all current versions again (should show updated currencies)
+GET {{baseUrl}}/api/currencies
+Accept: application/json

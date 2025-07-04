@@ -5,8 +5,13 @@ using MediatR;
 namespace Bwadl.Accounting.Application.Features.Users.Commands.UpdateUser;
 
 public record UpdateUserCommand(
-    Guid Id,
-    string Name,
-    string Email,
-    UserType Type
+    int Id,
+    string? Email,
+    string? MobileNumber,
+    string? MobileCountryCode,
+    string? IdentityId,
+    string? IdentityType,
+    string? NameEn,
+    string? NameAr,
+    string? Language
 ) : IRequest<UserDto>;

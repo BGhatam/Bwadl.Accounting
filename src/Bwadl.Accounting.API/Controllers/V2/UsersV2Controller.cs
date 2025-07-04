@@ -60,7 +60,7 @@ public class UsersV2Controller : ControllerBase
     /// Get user by ID with additional metadata (V2 feature)
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserDetailResponse>> GetUser(Guid id)
+    public async Task<ActionResult<UserDetailResponse>> GetUser(int id)
     {
         _logger.LogInformation("GET /api/v2/users/{UserId} - Retrieving user with metadata", id);
 
@@ -92,7 +92,7 @@ public class UsersV2Controller : ControllerBase
     private static double CalculateProfileCompleteness(UserDto user)
     {
         // Simple completeness calculation
-        var fields = new[] { user.Name, user.Email };
+        var fields = new[] { user.NameEn, user.NameAr, user.Email };
         var completedFields = fields.Count(f => !string.IsNullOrWhiteSpace(f));
         return (double)completedFields / fields.Length * 100;
     }

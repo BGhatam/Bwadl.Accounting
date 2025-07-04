@@ -8,25 +8,54 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
     public UpdateUserCommandValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty()
-            .WithMessage("User ID is required");
+            .GreaterThan(0)
+            .WithMessage("User ID must be greater than 0");
 
-        RuleFor(x => x.Name)
-            .NotEmpty()
-            .WithMessage("Name is required")
-            .MaximumLength(100)
-            .WithMessage("Name must not exceed 100 characters");
-
+        // Email validation (when provided)
         RuleFor(x => x.Email)
-            .NotEmpty()
-            .WithMessage("Email is required")
             .EmailAddress()
             .WithMessage("Email must be a valid email address")
             .MaximumLength(255)
-            .WithMessage("Email must not exceed 255 characters");
+            .WithMessage("Email must not exceed 255 characters")
+            .When(x => !string.IsNullOrWhiteSpace(x.Email));
 
-        RuleFor(x => x.Type)
-            .IsInEnum()
-            .WithMessage("Invalid user type");
+        // Mobile validation (when provided)
+        RuleFor(x => x.MobileNumber)
+            .NotEmpty()
+            .WithMessage("Mobile number is required when mobile country code is provided")
+            .When(x => !string.IsNullOrWhiteSpace(x.MobileCountryCode));
+
+        RuleFor(x => x.MobileCountryCode)
+            .NotEmpty()
+            .WithMessage("Mobile country code is required when mobile number is provided")
+            .When(x => !string.IsNullOrWhiteSpace(x.MobileNumber));
+
+        // Identity validation (when provided)
+        RuleFor(x => x.IdentityType)
+            .NotEmpty()
+            .WithMessage("Identity type is required when identity ID is provided")
+            .When(x => !string.IsNullOrWhiteSpace(x.IdentityId));
+
+        RuleFor(x => x.IdentityId)
+            .NotEmpty()
+            .WithMessage("Identity ID is required when identity type is provided")
+            .When(x => !string.IsNullOrWhiteSpace(x.IdentityType));
+
+        // Names validation
+        RuleFor(x => x.NameEn)
+            .MaximumLength(255)
+            .WithMessage("English name must not exceed 255 characters")
+            .When(x => !string.IsNullOrWhiteSpace(x.NameEn));
+
+        RuleFor(x => x.NameAr)
+            .MaximumLength(255)
+            .WithMessage("Arabic name must not exceed 255 characters")
+            .When(x => !string.IsNullOrWhiteSpace(x.NameAr));
+
+        // Language validation
+        RuleFor(x => x.Language)
+            .Must(lang => string.IsNullOrWhiteSpace(lang) || lang.ToLower() == "en" || lang.ToLower() == "ar")
+            .WithMessage("Language must be 'en' or 'ar'")
+            .When(x => !string.IsNullOrWhiteSpace(x.Language));
     }
 }

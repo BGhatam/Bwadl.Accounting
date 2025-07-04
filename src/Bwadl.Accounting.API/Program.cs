@@ -1,5 +1,6 @@
 using Bwadl.Accounting.Application;
 using Bwadl.Accounting.Infrastructure;
+using Bwadl.Accounting.Infrastructure.Data.Seed;
 using Bwadl.Accounting.API.Configuration;
 using Serilog;
 
@@ -58,6 +59,12 @@ app.UseStaticFiles();
 app.UseHealthCheckConfiguration();
 
 app.MapControllers();
+
+// Initialize database
+if (app.Environment.IsDevelopment())
+{
+    await DatabaseInitializer.InitializeAsync(app.Services);
+}
 
 try
 {

@@ -1,15 +1,25 @@
-using Bwadl.Accounting.Domain.ValueObjects;
 using Bwadl.Accounting.Application.Common.DTOs;
 
 namespace Bwadl.Accounting.API.Models.Responses;
 
 public record UserResponse(
-    Guid Id,
-    string Name,
-    string Email,
-    UserType Type,
+    int Id,
+    string? Email,
+    string? MobileNumber,
+    string? MobileCountryCode,
+    string? IdentityId,
+    string? IdentityType,
+    string? NameEn,
+    string? NameAr,
+    string Language,
+    bool IsEmailVerified,
+    bool IsMobileVerified,
+    bool IsUserVerified,
+    DateTime? EmailVerifiedAt,
+    DateTime? MobileVerifiedAt,
+    DateTime? UserVerifiedAt,
     DateTime CreatedAt,
-    DateTime? UpdatedAt
+    DateTime UpdatedAt
 );
 
 // V2 API Response Models

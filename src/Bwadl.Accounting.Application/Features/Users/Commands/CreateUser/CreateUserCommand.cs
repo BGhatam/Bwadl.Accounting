@@ -5,7 +5,13 @@ using MediatR;
 namespace Bwadl.Accounting.Application.Features.Users.Commands.CreateUser;
 
 public record CreateUserCommand(
-    string Name,
-    string Email,
-    UserType Type
+    string? Email,
+    string? MobileNumber,
+    string? MobileCountryCode,
+    string? IdentityId,
+    string? IdentityType,
+    string? NameEn,
+    string? NameAr,
+    string? Language,
+    string? Password
 ) : IRequest<UserDto>;
