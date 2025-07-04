@@ -36,7 +36,7 @@ public class PagedResponse<T>
 
 public class UserDetailResponse
 {
-    public UserDto User { get; set; } = null!;
+    public UserResponse User { get; set; } = null!;
     public UserMetadata Metadata { get; set; } = null!;
 }
 

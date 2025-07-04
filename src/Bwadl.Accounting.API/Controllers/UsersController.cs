@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Bwadl.Accounting.API.Models.Requests;
 using Bwadl.Accounting.API.Models.Responses;
+using Bwadl.Accounting.Application.Common.DTOs;
 using Bwadl.Accounting.Application.Features.Users.Commands.CreateUser;
 using Bwadl.Accounting.Application.Features.Users.Commands.DeleteUser;
 using Bwadl.Accounting.Application.Features.Users.Commands.UpdateUser;
@@ -28,8 +29,13 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserResponse>>> GetAllUsers(CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResponse<UserResponse>>> GetAllUsers(
+        [FromQuery] int page = 1, 
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation("GET /api/users - Retrieving users with pagination. Page: {Page}, PageSize: {PageSize}", page, pageSize);
+
         var query = new GetAllUsersQuery();
         var users = await _mediator.Send(query, cancellationToken);
         
@@ -53,13 +59,27 @@ public class UsersController : ControllerBase
             user.UpdatedAt
         ));
 
-        var userList = response.ToList();
-        _logger.LogInformation("GET /api/users - Returning {UserCount} users", userList.Count);
-        return Ok(userList);
+        // Apply pagination
+        var totalCount = response.Count();
+        var pagedUsers = response.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+        var pagedResponse = new PagedResponse<UserResponse>
+        {
+            Data = pagedUsers,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+        };
+
+        _logger.LogInformation("GET /api/users - Returning {UserCount} users (Page {Page} of {TotalPages})", 
+            pagedUsers.Count, page, pagedResponse.TotalPages);
+
+        return Ok(pagedResponse);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<UserResponse>> GetUser(int id, CancellationToken cancellationToken)
+    public async Task<ActionResult<UserDetailResponse>> GetUser(int id, CancellationToken cancellationToken)
     {
         _logger.LogInformation("GET /api/users/{UserId} - Retrieving user by ID", id);
 
@@ -72,7 +92,7 @@ public class UsersController : ControllerBase
             return NotFound($"User with ID {id} not found.");
         }
 
-        var response = new UserResponse(
+        var userResponse = new UserResponse(
             user.Id,
             user.Email,
             user.MobileNumber,
@@ -92,7 +112,19 @@ public class UsersController : ControllerBase
             user.UpdatedAt
         );
 
-        _logger.LogInformation("GET /api/users/{UserId} - Returning user successfully", id);
+        // Add enhanced metadata
+        var response = new UserDetailResponse
+        {
+            User = userResponse,
+            Metadata = new UserMetadata
+            {
+                ProfileCompleteness = CalculateProfileCompleteness(user),
+                LastLoginDays = CalculateLastLoginDays(user),
+                AccountAge = DateTime.UtcNow - user.CreatedAt
+            }
+        };
+
+        _logger.LogInformation("GET /api/users/{UserId} - Returning user with metadata successfully", id);
         return Ok(response);
     }
 
@@ -217,5 +249,20 @@ public class UsersController : ControllerBase
             _logger.LogWarning("DELETE /api/users/{UserId} - User not found", id);
             return NotFound(ex.Message);
         }
+    }
+
+    private static double CalculateProfileCompleteness(UserDto user)
+    {
+        // Calculate profile completeness based on key fields
+        var fields = new[] { user.NameEn, user.NameAr, user.Email, user.MobileNumber, user.IdentityId };
+        var completedFields = fields.Count(f => !string.IsNullOrWhiteSpace(f));
+        return (double)completedFields / fields.Length * 100;
+    }
+
+    private static int CalculateLastLoginDays(UserDto user)
+    {
+        // Mock calculation - in real app, you'd have LastLogin property
+        // For now, use days since account creation as a placeholder
+        return (DateTime.UtcNow - user.CreatedAt).Days;
     }
 }

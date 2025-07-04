@@ -17,47 +17,50 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task GetUsers_V1_Should_Return_Simple_List()
+    public async Task GetUsers_V1_Should_Return_Paged_Response()
     {
         // Arrange
         var client = _factory.CreateClient();
 
         // Act
-        var response = await client.GetFromJsonAsync<List<UserDto>>("/api/v1/users");
+        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/v1/users");
 
         // Assert
         response.Should().NotBeNull();
-        response.Should().BeOfType<List<UserDto>>();
+        response.Should().BeOfType<PagedResponse<UserResponse>>();
+        response!.Data.Should().NotBeNull();
+        response.Page.Should().Be(1);
+        response.PageSize.Should().Be(10); // Default page size
     }
 
     [Fact]
-    public async Task GetUsers_V2_Should_Return_Paged_Response()
+    public async Task GetUsers_V2_Should_Return_NotFound_Since_V2_Controller_Removed()
     {
         // Arrange
         var client = _factory.CreateClient();
 
         // Act
-        var response = await client.GetFromJsonAsync<PagedResponse<UserDto>>("/api/v2/users?page=1&pageSize=5");
+        var response = await client.GetAsync("/api/v2/users?page=1&pageSize=5");
 
         // Assert
-        response.Should().NotBeNull();
-        response.Should().BeOfType<PagedResponse<UserDto>>();
-        response!.Page.Should().Be(1);
-        response.PageSize.Should().Be(5);
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
 
     [Fact]
-    public async Task GetUsers_Default_Should_Use_V1()
+    public async Task GetUsers_Default_Should_Return_Paged_Response()
     {
         // Arrange
         var client = _factory.CreateClient();
 
         // Act - No version specified, should default to V1
-        var response = await client.GetFromJsonAsync<List<UserDto>>("/api/users");
+        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/users");
 
         // Assert
         response.Should().NotBeNull();
-        response.Should().BeOfType<List<UserDto>>();
+        response.Should().BeOfType<PagedResponse<UserResponse>>();
+        response!.Data.Should().NotBeNull();
+        response.Page.Should().Be(1);
+        response.PageSize.Should().Be(10); // Default page size
     }
 
     [Fact]
@@ -66,12 +69,12 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
         // Arrange
         var client = _factory.CreateClient();
 
-        // Act - Version via query string
-        var response = await client.GetFromJsonAsync<PagedResponse<UserDto>>("/api/users?version=2.0&page=1&pageSize=3");
+        // Act - Version via query string with pagination
+        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/users?version=1.0&page=1&pageSize=3");
 
         // Assert
         response.Should().NotBeNull();
-        response.Should().BeOfType<PagedResponse<UserDto>>();
+        response.Should().BeOfType<PagedResponse<UserResponse>>();
         response!.PageSize.Should().Be(3);
     }
 
@@ -80,14 +83,14 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
     {
         // Arrange
         var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Add("X-Version", "2.0");
+        client.DefaultRequestHeaders.Add("X-Version", "1.0");
 
-        // Act - Version via header
-        var response = await client.GetFromJsonAsync<PagedResponse<UserDto>>("/api/users?page=1&pageSize=2");
+        // Act - Version via header with pagination
+        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/users?page=1&pageSize=2");
 
         // Assert
         response.Should().NotBeNull();
-        response.Should().BeOfType<PagedResponse<UserDto>>();
+        response.Should().BeOfType<PagedResponse<UserResponse>>();
         response!.PageSize.Should().Be(2);
     }
 }
