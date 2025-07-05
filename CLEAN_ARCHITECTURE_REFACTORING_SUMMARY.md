@@ -168,3 +168,30 @@ src/Bwadl.Accounting.API/
 ```
 
 This refactoring successfully aligns the entire codebase with Clean Architecture principles and creates a more maintainable and consistent structure across all features.
+
+## Post-Refactoring Fixes
+
+### Authorization Middleware Configuration Fix
+
+**Issue**: After the refactoring, the application startup was failing with an `InvalidOperationException`:
+```
+Endpoint Bwadl.Accounting.API.Controllers.AuthController.GetCurrentUser contains authorization metadata, 
+but a middleware was not found that supports authorization.
+```
+
+**Root Cause**: The middleware pipeline order was incorrect. `app.UseAuthorization()` was placed before `app.UseRouting()`, but according to ASP.NET Core requirements, authorization middleware must come **after** routing middleware.
+
+**Solution**: Updated `Program.cs` to fix the middleware order:
+```csharp
+// BEFORE (incorrect order)
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseRouting();
+
+// AFTER (correct order)
+app.UseAuthentication();
+app.UseRouting();
+app.UseAuthorization();
+```
+
+**Result**: ✅ Application now starts successfully with proper authorization support for protected endpoints.

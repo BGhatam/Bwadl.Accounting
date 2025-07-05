@@ -1,6 +1,6 @@
 using Bwadl.Accounting.Application.Common.DTOs;
 
-namespace Bwadl.Accounting.Application.Features.Auth.DTOs;
+namespace Bwadl.Accounting.Application.Common.DTOs;
 
 public class AuthResponse
 {

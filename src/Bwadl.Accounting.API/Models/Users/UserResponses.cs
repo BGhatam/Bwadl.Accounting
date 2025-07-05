@@ -1,6 +1,6 @@
 using Bwadl.Accounting.Application.Common.DTOs;
 
-namespace Bwadl.Accounting.Application.Features.Users.DTOs;
+namespace Bwadl.Accounting.API.Models.Users;
 
 // V2 API Response Models
 public class PagedResponse<T>

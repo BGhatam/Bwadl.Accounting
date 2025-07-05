@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Bwadl.Accounting.Application.Features.Users.DTOs;
+namespace Bwadl.Accounting.API.Models.Users;
 
 public record CreateUserRequest(
     [EmailAddress][StringLength(255)]

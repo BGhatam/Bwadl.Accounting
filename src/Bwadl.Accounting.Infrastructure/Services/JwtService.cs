@@ -113,4 +113,46 @@ public class JwtService : IJwtService
             return null;
         }
     }
+
+    public AccessTokenResult GenerateAccessToken(User user, IEnumerable<string> roles, IEnumerable<string> permissions)
+    {
+        var token = GenerateToken(user, roles, permissions);
+        var expiresAt = DateTime.UtcNow.Add(AccessTokenExpiration);
+        return new AccessTokenResult(token, expiresAt);
+    }
+
+    public Domain.Interfaces.TokenValidationResult ValidateAccessToken(string token)
+    {
+        try
+        {
+            var principal = ValidateToken(token);
+            if (principal == null)
+            {
+                return new Domain.Interfaces.TokenValidationResult(false, null, null);
+            }
+
+            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var expClaim = principal.FindFirst(JwtRegisteredClaimNames.Exp)?.Value;
+            
+            DateTime? expiresAt = null;
+            if (long.TryParse(expClaim, out var exp))
+            {
+                expiresAt = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
+            }
+
+            return new Domain.Interfaces.TokenValidationResult(true, userIdClaim, expiresAt);
+        }
+        catch
+        {
+            return new Domain.Interfaces.TokenValidationResult(false, null, null);
+        }
+    }
+
+    public bool ValidateRefreshToken(string refreshToken)
+    {
+        // For basic implementation, we just check if it's not null/empty
+        // In a production environment, you might store refresh tokens in database
+        // and validate against that store
+        return !string.IsNullOrWhiteSpace(refreshToken);
+    }
 }

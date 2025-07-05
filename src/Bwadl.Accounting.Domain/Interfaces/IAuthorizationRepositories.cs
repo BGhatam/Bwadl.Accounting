@@ -30,7 +30,7 @@ public interface IPermissionRepository
 
 public interface IUserRoleRepository
 {
-    Task<IEnumerable<UserRole>> GetUserRolesAsync(int userId);
+    Task<IEnumerable<UserRole>> GetUserRolesAsync(int userId, CancellationToken cancellationToken = default);
     Task<IEnumerable<UserRole>> GetActiveUserRolesAsync(int userId);
     Task<UserRole> AssignRoleAsync(UserRole userRole);
     Task RemoveRoleAsync(int userId, int roleId);
@@ -53,7 +53,8 @@ public interface IApiKeyRepository
 
 public interface IPermissionService
 {
-    Task<IEnumerable<string>> GetUserPermissionsAsync(int userId);
+    Task<IEnumerable<string>> GetUserPermissionsAsync(int userId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Permission>> GetUserPermissionsAsync(int userId);
     Task<bool> HasPermissionAsync(int userId, string permission);
     Task<IEnumerable<string>> GetRolePermissionsAsync(string roleName);
 }

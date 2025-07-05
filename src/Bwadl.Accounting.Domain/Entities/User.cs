@@ -23,6 +23,13 @@ public class User : IVersionedEntity
 
     // Authentication
     public string? PasswordHash { get; private set; }
+    public string? RefreshToken { get; private set; }
+    public DateTime? RefreshTokenExpiry { get; private set; }
+
+    // Account locking
+    public bool IsLocked { get; private set; }
+    public DateTime? LockedUntil { get; private set; }
+    public int FailedLoginAttempts { get; private set; }
 
     // Names (multilingual)
     public string? NameEn { get; private set; }
@@ -158,14 +165,54 @@ public class User : IVersionedEntity
         Details = details;
     }
 
-    public void UpdateLastChosenParticipant(int? participantId)
+    // Refresh token methods
+    public void UpdateRefreshToken(string refreshToken, DateTime expiry)
     {
-        LastChosenParticipantId = participantId;
+        RefreshToken = refreshToken;
+        RefreshTokenExpiry = expiry;
     }
 
-    public void SetCreatedByUser(int? userId)
+    public void ClearRefreshToken()
     {
-        CreatedByUserId = userId;
+        RefreshToken = null;
+        RefreshTokenExpiry = null;
+    }
+
+    public bool IsRefreshTokenValid()
+    {
+        return !string.IsNullOrEmpty(RefreshToken) && 
+               RefreshTokenExpiry.HasValue && 
+               RefreshTokenExpiry > DateTime.UtcNow;
+    }
+
+    // Account locking methods
+    public void LockAccount(DateTime? until = null)
+    {
+        IsLocked = true;
+        LockedUntil = until ?? DateTime.UtcNow.AddMinutes(30);
+    }
+
+    public void UnlockAccount()
+    {
+        IsLocked = false;
+        LockedUntil = null;
+        FailedLoginAttempts = 0;
+    }
+
+    public void IncrementFailedLoginAttempts()
+    {
+        FailedLoginAttempts++;
+        
+        // Lock account after 5 failed attempts
+        if (FailedLoginAttempts >= 5)
+        {
+            LockAccount();
+        }
+    }
+
+    public void ResetFailedLoginAttempts()
+    {
+        FailedLoginAttempts = 0;
     }
 
     // Verification methods

@@ -1,6 +1,4 @@
 using Bwadl.Accounting.Application.Common.Behaviors;
-using Bwadl.Accounting.Application.Features.Currencies.Interfaces;
-using Bwadl.Accounting.Application.Features.Currencies.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,9 +22,6 @@ public static class DependencyInjection
         
         // FluentValidation
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        
-        // Application Services
-        services.AddScoped<ICurrencyService, CurrencyService>();
         
         // MediatR Behaviors
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));

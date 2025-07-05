@@ -1,6 +1,14 @@
 using Asp.Versioning;
-using Bwadl.Accounting.Application.Features.Currencies.DTOs;
-using Bwadl.Accounting.Application.Features.Currencies.Interfaces;
+using Bwadl.Accounting.Application.Common.DTOs;
+using Bwadl.Accounting.API.Models.Currencies;
+using Bwadl.Accounting.Application.Features.Currencies.Commands.CreateCurrency;
+using Bwadl.Accounting.Application.Features.Currencies.Commands.UpdateCurrency;
+using Bwadl.Accounting.Application.Features.Currencies.Commands.DeleteCurrency;
+using Bwadl.Accounting.Application.Features.Currencies.Queries.GetCurrency;
+using Bwadl.Accounting.Application.Features.Currencies.Queries.GetAllCurrencies;
+using Bwadl.Accounting.Application.Features.Currencies.Queries.GetCurrencyVersions;
+using Bwadl.Accounting.Domain.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -12,12 +20,12 @@ namespace Bwadl.Accounting.API.Controllers;
 [Produces("application/json")]
 public class CurrenciesController : ControllerBase
 {
-    private readonly ICurrencyService _currencyService;
+    private readonly IMediator _mediator;
     private readonly ILogger<CurrenciesController> _logger;
 
-    public CurrenciesController(ICurrencyService currencyService, ILogger<CurrenciesController> logger)
+    public CurrenciesController(IMediator mediator, ILogger<CurrenciesController> logger)
     {
-        _currencyService = currencyService ?? throw new ArgumentNullException(nameof(currencyService));
+        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -29,7 +37,8 @@ public class CurrenciesController : ControllerBase
     {
         try
         {
-            var currencies = await _currencyService.GetAllCurrentVersionsAsync();
+            var query = new GetAllCurrenciesQuery();
+            var currencies = await _mediator.Send(query);
             return Ok(currencies);
         }
         catch (Exception ex)
@@ -47,11 +56,14 @@ public class CurrenciesController : ControllerBase
     {
         try
         {
-            var currency = await _currencyService.GetCurrentVersionAsync(currencyCode);
+            var query = new GetCurrencyQuery(currencyCode);
+            var currency = await _mediator.Send(query);
+            
             if (currency == null)
             {
                 return NotFound($"Currency with code '{currencyCode}' not found");
             }
+            
             return Ok(currency);
         }
         catch (Exception ex)
@@ -69,7 +81,8 @@ public class CurrenciesController : ControllerBase
     {
         try
         {
-            var currencies = await _currencyService.GetAllVersionsAsync(currencyCode);
+            var query = new GetCurrencyVersionsQuery(currencyCode);
+            var currencies = await _mediator.Send(query);
             return Ok(currencies);
         }
         catch (Exception ex)
@@ -83,7 +96,7 @@ public class CurrenciesController : ControllerBase
     /// Create a new currency
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<CurrencyDto>> Create([FromBody] CreateCurrencyRequest request)
+    public async Task<ActionResult<CurrencyDto>> Create([FromBody] Models.Currencies.CreateCurrencyRequest request)
     {
         try
         {
@@ -93,16 +106,31 @@ public class CurrenciesController : ControllerBase
             }
 
             var currentUser = GetCurrentUser();
-            var currency = await _currencyService.CreateAsync(request, currentUser);
+            var command = new CreateCurrencyCommand(
+                request.CurrencyCode,
+                request.CurrencyName,
+                request.DecimalPlaces,
+                currentUser
+            );
+
+            var currency = await _mediator.Send(command);
             
             return CreatedAtAction(
                 nameof(GetCurrentVersion), 
                 new { currencyCode = currency.CurrencyCode }, 
                 currency);
         }
-        catch (InvalidOperationException ex)
+        catch (DuplicateCurrencyCodeException ex)
         {
             return Conflict(ex.Message);
+        }
+        catch (InvalidCurrencyCodeException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (InvalidDecimalPlacesException ex)
+        {
+            return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
@@ -115,7 +143,7 @@ public class CurrenciesController : ControllerBase
     /// Update an existing currency (creates a new version)
     /// </summary>
     [HttpPut("{currencyCode}")]
-    public async Task<ActionResult<CurrencyDto>> Update(string currencyCode, [FromBody] UpdateCurrencyRequest request)
+    public async Task<ActionResult<CurrencyDto>> Update(string currencyCode, [FromBody] Models.Currencies.UpdateCurrencyRequest request)
     {
         try
         {
@@ -125,18 +153,59 @@ public class CurrenciesController : ControllerBase
             }
 
             var currentUser = GetCurrentUser();
-            var currency = await _currencyService.UpdateAsync(currencyCode, request, currentUser);
-            
+            var command = new UpdateCurrencyCommand(
+                currencyCode,
+                request.CurrencyName,
+                request.DecimalPlaces,
+                currentUser
+            );
+
+            var currency = await _mediator.Send(command);
             return Ok(currency);
         }
-        catch (InvalidOperationException ex)
+        catch (CurrencyNotFoundException ex)
         {
             return NotFound(ex.Message);
+        }
+        catch (InvalidDecimalPlacesException ex)
+        {
+            return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating currency {CurrencyCode}", currencyCode);
             return StatusCode(500, "An error occurred while updating the currency");
+        }
+    }
+
+    /// <summary>
+    /// Delete a currency
+    /// </summary>
+    [HttpDelete("{currencyCode}")]
+    public async Task<ActionResult> Delete(string currencyCode)
+    {
+        try
+        {
+            var command = new DeleteCurrencyCommand(currencyCode);
+            await _mediator.Send(command);
+            return NoContent();
+        }
+        catch (CurrencyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (CurrencyInUseException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (BaseCurrencyException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting currency {CurrencyCode}", currencyCode);
+            return StatusCode(500, "An error occurred while deleting the currency");
         }
     }
 
@@ -148,8 +217,9 @@ public class CurrenciesController : ControllerBase
     {
         try
         {
-            var exists = await _currencyService.ExistsAsync(currencyCode);
-            return exists ? Ok() : NotFound();
+            var query = new GetCurrencyQuery(currencyCode);
+            var currency = await _mediator.Send(query);
+            return currency != null ? Ok() : NotFound();
         }
         catch (Exception ex)
         {

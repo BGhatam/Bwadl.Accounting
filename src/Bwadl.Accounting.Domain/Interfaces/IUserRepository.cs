@@ -9,6 +9,7 @@ public interface IUserRepository
     Task<User?> GetByMobileAsync(string mobile, string countryCode = "+966", CancellationToken cancellationToken = default);
     Task<User?> GetByIdentityAsync(string identityId, CancellationToken cancellationToken = default);
     Task<User?> GetBySessionIdAsync(string sessionId, CancellationToken cancellationToken = default);
+    Task<User?> GetByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<User>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default);
@@ -16,6 +17,8 @@ public interface IUserRepository
     Task<bool> ExistsByIdentityAsync(string identityId, CancellationToken cancellationToken = default);
     Task<User> CreateAsync(User user, CancellationToken cancellationToken = default);
     Task UpdateAsync(User user, CancellationToken cancellationToken = default);
+    Task UpdatePasswordAsync(int userId, string newPasswordHash, CancellationToken cancellationToken = default);
+    Task UpdateRefreshTokenAsync(int userId, string refreshToken, CancellationToken cancellationToken = default);
     Task DeleteAsync(User user, CancellationToken cancellationToken = default);
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     Task<List<User>> CreateSystemAdminsAsync(CancellationToken cancellationToken = default);

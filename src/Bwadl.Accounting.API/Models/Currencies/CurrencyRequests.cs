@@ -1,4 +1,4 @@
-namespace Bwadl.Accounting.Application.Features.Currencies.DTOs;
+namespace Bwadl.Accounting.API.Models.Currencies;
 
 public record CreateCurrencyRequest(
     string CurrencyCode,

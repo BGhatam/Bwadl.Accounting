@@ -1,5 +1,5 @@
 using Bwadl.Accounting.Application.Common.DTOs;
-using Bwadl.Accounting.Application.Features.Users.DTOs;
+using Bwadl.Accounting.API.Models.Users;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;

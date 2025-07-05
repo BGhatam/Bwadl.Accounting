@@ -3,7 +3,7 @@ using Bwadl.Accounting.Application.Common.DTOs;
 using Bwadl.Accounting.Application.Features.Users.Commands.CreateUser;
 using Bwadl.Accounting.Application.Features.Users.Commands.DeleteUser;
 using Bwadl.Accounting.Application.Features.Users.Commands.UpdateUser;
-using Bwadl.Accounting.Application.Features.Users.DTOs;
+using Bwadl.Accounting.API.Models.Users;
 using Bwadl.Accounting.Application.Features.Users.Queries.GetAllUsers;
 using Bwadl.Accounting.Application.Features.Users.Queries.GetUser;
 using Bwadl.Accounting.Domain.Exceptions;
@@ -89,7 +89,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<UserDto>> CreateUser([FromBody] Models.Users.CreateUserRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -117,7 +117,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] Models.Users.UpdateUserRequest request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("PUT /api/users/{UserId} - Updating user", id);
 

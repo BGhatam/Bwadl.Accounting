@@ -24,27 +24,18 @@ public static class SwaggerConfiguration
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "JWT Authorization header using the Bearer scheme",
+                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.ApiKey,
                 Scheme = "Bearer"
             });
 
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
+            // Remove global security requirement and let individual endpoints define their own
+            // This allows Swagger to properly show locked/unlocked icons based on [Authorize] attributes
+            
+            // Add operation filter to handle authorization requirements per endpoint
+            c.OperationFilter<AuthorizeOperationFilter>();
         });
 
         return services;

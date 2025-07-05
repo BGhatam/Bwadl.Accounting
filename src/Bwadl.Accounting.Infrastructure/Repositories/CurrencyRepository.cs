@@ -99,4 +99,20 @@ public class CurrencyRepository : ICurrencyRepository
         return await _context.Currencies
             .AnyAsync(c => c.CurrencyCode == currencyCode.ToUpperInvariant());
     }
+
+    public async Task DeleteAsync(string currencyCode)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(currencyCode);
+        
+        // Remove all versions of the currency
+        var currencies = await _context.Currencies
+            .Where(c => c.CurrencyCode == currencyCode.ToUpperInvariant())
+            .ToListAsync();
+            
+        if (currencies.Any())
+        {
+            _context.Currencies.RemoveRange(currencies);
+            await _context.SaveChangesAsync();
+        }
+    }
 }

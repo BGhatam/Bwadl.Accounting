@@ -27,14 +27,16 @@ public class Currency : IVersionedEntity
         ArgumentException.ThrowIfNullOrWhiteSpace(currencyName);
         ArgumentException.ThrowIfNullOrWhiteSpace(createdBy);
 
+        var now = DateTime.UtcNow;
+        
         CurrencyCode = currencyCode.ToUpperInvariant();
         CurrencyName = currencyName;
         DecimalPlaces = decimalPlaces;
         Version = 1;
         CreatedBy = createdBy;
         UpdatedBy = createdBy;
-        CreatedAt = DateTime.UtcNow;
-        UpdatedAt = DateTime.UtcNow;
+        CreatedAt = now;
+        UpdatedAt = now;
     }
 
     // Update method for business logic

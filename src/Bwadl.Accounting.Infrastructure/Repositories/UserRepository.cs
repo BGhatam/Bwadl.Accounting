@@ -69,6 +69,18 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.SessionId == sessionId, cancellationToken);
     }
 
+    public async Task<User?> GetByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(refreshToken);
+        
+        return await _context.Users
+            .Include(u => u.CreatedByUser)
+            .Include(u => u.UpdatedByUser)
+            .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken && 
+                                    u.RefreshTokenExpiry > DateTime.UtcNow, 
+                                    cancellationToken);
+    }
+
     public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Users
@@ -148,6 +160,34 @@ public class UserRepository : IUserRepository
         return await _context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task UpdatePasswordAsync(int userId, string newPasswordHash, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(newPasswordHash);
+        
+        var user = await _context.Users.FindAsync(new object[] { userId }, cancellationToken);
+        if (user != null)
+        {
+            user.SetPassword("", newPasswordHash); // Pass empty string for password since we already have the hash
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    public async Task UpdateRefreshTokenAsync(int userId, string refreshToken, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(refreshToken);
+        
+        var user = await _context.Users.FindAsync(new object[] { userId }, cancellationToken);
+        if (user != null)
+        {
+            // Set refresh token with default expiry based on JWT settings
+            var expiry = DateTime.UtcNow.AddDays(30); // Default 30 days, should be configurable
+            user.UpdateRefreshToken(refreshToken, expiry);
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
+
     public async Task<List<User>> CreateSystemAdminsAsync(CancellationToken cancellationToken = default)
     {
         var admins = new List<User>();
@@ -184,7 +224,8 @@ public class UserRepository : IUserRepository
                     Identity.CreateNationalId("1234567890")
                 );
                 sysAdmin.SetPassword("@P@ssme1!", _passwordService.HashPassword("@P@ssme1!"));
-                sysAdmin.SetCreatedByUser(builtIn.Id);
+                // Set created by using EF Core change tracking
+                _context.Entry(sysAdmin).Property("CreatedByUserId").CurrentValue = builtIn.Id;
                 await _context.Users.AddAsync(sysAdmin, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
                 _logger.LogInformation("Created main system admin user");
@@ -225,7 +266,8 @@ public class UserRepository : IUserRepository
                         identity
                     );
                     admin.SetPassword("@P@ssme1!", _passwordService.HashPassword("@P@ssme1!"));
-                    admin.SetCreatedByUser(sysAdmin.Id);
+                    // Set created by using EF Core change tracking
+                    _context.Entry(admin).Property("CreatedByUserId").CurrentValue = sysAdmin.Id;
                     await _context.Users.AddAsync(admin, cancellationToken);
                     _logger.LogInformation("Created admin user: {Email}", adminData.Email);
                 }

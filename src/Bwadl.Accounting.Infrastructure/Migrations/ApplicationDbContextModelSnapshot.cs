@@ -419,11 +419,17 @@ namespace Bwadl.Accounting.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("email_verified_at");
 
+                    b.Property<int>("FailedLoginAttempts")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsEmailVerified")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("is_email_verified");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsMobileVerified")
                         .ValueGeneratedOnAdd()
@@ -449,6 +455,9 @@ namespace Bwadl.Accounting.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("last_chosen_participant_id");
 
+                    b.Property<DateTime?>("LockedUntil")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime?>("MobileVerifiedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("mobile_verified_at");
@@ -467,6 +476,12 @@ namespace Bwadl.Accounting.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("password_hash");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RefreshTokenExpiry")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SessionId")
                         .HasMaxLength(500)

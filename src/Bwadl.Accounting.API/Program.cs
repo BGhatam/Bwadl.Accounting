@@ -56,11 +56,13 @@ app.UseMiddleware<Bwadl.Accounting.API.Middleware.ExceptionHandlingMiddleware>()
 app.UseMiddleware<Bwadl.Accounting.API.Middleware.SecurityHeadersMiddleware>();
 app.UseMiddleware<Bwadl.Accounting.Infrastructure.Middleware.ApiKeyMiddleware>();
 
-// Add Authentication and Authorization middleware
+// Add Authentication middleware (before routing)
 app.UseAuthentication();
-app.UseAuthorization();
 
 app.UseRouting();
+
+// Add Authorization middleware (after routing, before endpoints)
+app.UseAuthorization();
 
 // Enable static files for Health Checks UI (after routing)
 app.UseStaticFiles();

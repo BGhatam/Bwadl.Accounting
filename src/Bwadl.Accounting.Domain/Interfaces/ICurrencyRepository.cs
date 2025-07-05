@@ -9,5 +9,6 @@ public interface ICurrencyRepository
     Task<List<Currency>> GetAllCurrentVersionsAsync();
     Task<Currency> CreateAsync(Currency currency);
     Task<Currency> UpdateAsync(string currencyCode, string currencyName, int decimalPlaces, string updatedBy);
+    Task DeleteAsync(string currencyCode);
     Task<bool> ExistsAsync(string currencyCode);
 }

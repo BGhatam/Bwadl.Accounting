@@ -14,19 +14,22 @@ public class UserRoleRepository : IUserRoleRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<UserRole>> GetUserRolesAsync(int userId)
+    public async Task<IEnumerable<UserRole>> GetUserRolesAsync(int userId, CancellationToken cancellationToken = default)
     {
         return await _context.UserRoles
             .Include(ur => ur.Role)
             .Where(ur => ur.UserId == userId)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<UserRole>> GetActiveUserRolesAsync(int userId)
     {
         return await _context.UserRoles
             .Include(ur => ur.Role)
-            .Where(ur => ur.UserId == userId && ur.IsValidRole && ur.Role.IsActive)
+            .Where(ur => ur.UserId == userId && 
+                        ur.IsActive && 
+                        (ur.ExpiresAt == null || ur.ExpiresAt > DateTime.UtcNow) && 
+                        ur.Role.IsActive)
             .ToListAsync();
     }
 
@@ -55,7 +58,8 @@ public class UserRoleRepository : IUserRoleRepository
             .Include(ur => ur.Role)
             .AnyAsync(ur => ur.UserId == userId && 
                            ur.Role.Name == roleName && 
-                           ur.IsValidRole && 
+                           ur.IsActive && 
+                           (ur.ExpiresAt == null || ur.ExpiresAt > DateTime.UtcNow) && 
                            ur.Role.IsActive);
     }
 
@@ -63,7 +67,10 @@ public class UserRoleRepository : IUserRoleRepository
     {
         return await _context.UserRoles
             .Include(ur => ur.Role)
-            .Where(ur => ur.UserId == userId && ur.IsValidRole && ur.Role.IsActive)
+            .Where(ur => ur.UserId == userId && 
+                        ur.IsActive && 
+                        (ur.ExpiresAt == null || ur.ExpiresAt > DateTime.UtcNow) && 
+                        ur.Role.IsActive)
             .Select(ur => ur.Role.Name)
             .ToListAsync();
     }

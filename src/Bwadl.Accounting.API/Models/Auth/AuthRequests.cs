@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Bwadl.Accounting.Application.Features.Auth.DTOs;
+namespace Bwadl.Accounting.API.Models.Auth;
 
 public class LoginRequest
 {
