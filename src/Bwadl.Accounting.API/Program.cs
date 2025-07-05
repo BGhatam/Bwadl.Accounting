@@ -26,10 +26,10 @@ builder.Services.AddSwaggerConfiguration();
 // Add API Versioning
 builder.Services.AddApiVersioningConfiguration();
 
-// Add Health Checks
-builder.Services.AddHealthCheckConfiguration(builder.Configuration);
+// Add Health Check UI (API layer concern)
+builder.Services.AddHealthCheckUI(builder.Configuration);
 
-// Add Application and Infrastructure services
+// Add Application and Infrastructure services (Infrastructure includes health checks)
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 

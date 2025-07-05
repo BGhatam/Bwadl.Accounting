@@ -7,6 +7,7 @@ using Bwadl.Accounting.Infrastructure.Data;
 using Bwadl.Accounting.Infrastructure.ExternalServices;
 using Bwadl.Accounting.Infrastructure.Extensions;
 using Bwadl.Accounting.Infrastructure.Messaging;
+using Bwadl.Accounting.Infrastructure.Monitoring;
 using Bwadl.Accounting.Infrastructure.Repositories;
 using Bwadl.Accounting.Infrastructure.Security;
 using Bwadl.Accounting.Infrastructure.Services;
@@ -82,6 +83,9 @@ public static class DependencyInjection
         
         // Security
         services.AddSingleton<ISecretManager, SecretManager>();
+
+        // Monitoring and Health Checks
+        services.AddMonitoring(configuration);
 
         logger.Information("Infrastructure services registered successfully");
         return services;

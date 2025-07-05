@@ -4,32 +4,27 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace Bwadl.Accounting.API.Configuration;
 
+/// <summary>
+/// API-layer configuration for health check HTTP endpoints and UI.
+/// The actual health check implementations are in the Infrastructure layer.
+/// </summary>
 public static class HealthCheckConfiguration
 {
-    public static IServiceCollection AddHealthCheckConfiguration(this IServiceCollection services, IConfiguration configuration)
+    /// <summary>
+    /// Configures health check UI components.
+    /// Health check services themselves are registered in Infrastructure layer.
+    /// </summary>
+    public static IServiceCollection AddHealthCheckUI(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy("API is running"))
-            .AddCheck("database", () => HealthCheckResult.Healthy("Database is available"))
-            .AddCheck("memory", () =>
-            {
-                var allocated = GC.GetTotalMemory(false);
-                var data = new Dictionary<string, object>()
-                {
-                    { "allocated", allocated },
-                    { "gen0", GC.CollectionCount(0) },
-                    { "gen1", GC.CollectionCount(1) },
-                    { "gen2", GC.CollectionCount(2) }
-                };
-                return HealthCheckResult.Healthy("Memory usage is normal", data);
-            });
-
+        // Only UI configuration in API layer - health checks registered in Infrastructure
         services.AddHealthChecksUI(options =>
         {
             options.SetEvaluationTimeInSeconds(15); // More frequent updates
             options.SetMinimumSecondsBetweenFailureNotifications(60);
-            // Use only the health-api endpoint
-            options.AddHealthCheckEndpoint("Bwadl API", "/health-api");
+            // Configure endpoints for Kubernetes probes
+            options.AddHealthCheckEndpoint("Liveness", "/health/live");
+            options.AddHealthCheckEndpoint("Readiness", "/health/ready");
+            options.AddHealthCheckEndpoint("All Checks", "/health");
             options.SetHeaderText("Bwadl API Health Dashboard");
         })
         .AddInMemoryStorage(); // This will reset the storage
@@ -39,7 +34,33 @@ public static class HealthCheckConfiguration
 
     public static IApplicationBuilder UseHealthCheckConfiguration(this IApplicationBuilder app)
     {        
-        // Basic health check endpoint
+        // Liveness probe for Kubernetes (basic functionality)
+        app.UseHealthChecks("/health/live", new HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("live"),
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+            ResultStatusCodes =
+            {
+                [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+            }
+        });
+
+        // Readiness probe for Kubernetes (external dependencies)
+        app.UseHealthChecks("/health/ready", new HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("ready"),
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+            ResultStatusCodes =
+            {
+                [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+            }
+        });
+        
+        // General health check endpoint (all checks)
         app.UseHealthChecks("/health", new HealthCheckOptions
         {
             Predicate = _ => true,
@@ -68,7 +89,8 @@ public static class HealthCheckConfiguration
                         status = x.Value.Status.ToString(),
                         description = x.Value.Description,
                         duration = x.Value.Duration.ToString(),
-                        data = x.Value.Data
+                        data = x.Value.Data,
+                        tags = x.Value.Tags
                     }),
                     totalDuration = report.TotalDuration.ToString()
                 };
