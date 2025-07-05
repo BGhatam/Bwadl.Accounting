@@ -11,6 +11,31 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: bwadl_accounting_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    
     steps:
     - uses: actions/checkout@v4
     
@@ -27,6 +52,12 @@ jobs:
       
     - name: Test
       run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
+      env:
+        ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=bwadl_accounting_test;Username=postgres;Password=test_password"
+        ConnectionStrings__RedisConnection: "localhost:6379"
+        ASPNETCORE_ENVIRONMENT: "Testing"
+        Security__Jwt__SecretKey: "test-secret-key-for-ci-cd-pipeline-minimum-32-characters"
+        Security__ApiKeys__ValidApiKeys__0: "test_api_key_for_ci_cd"
       
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
@@ -53,7 +84,7 @@ jobs:
       run: dotnet build --no-restore --configuration Release
       
     - name: Publish
-      run: dotnet publish src/Bwadl.API/Bwadl.API.csproj --configuration Release --output ./publish
+      run: dotnet publish src/Bwadl.Accounting.API/Bwadl.Accounting.API.csproj --configuration Release --output ./publish
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4

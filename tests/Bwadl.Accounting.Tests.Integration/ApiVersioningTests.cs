@@ -7,11 +7,11 @@ using Xunit;
 
 namespace Bwadl.Accounting.Tests.Integration;
 
-public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
+public class ApiVersioningTests : IClassFixture<TestWebApplicationFactory<Program>>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly TestWebApplicationFactory<Program> _factory;
 
-    public ApiVersioningTests(WebApplicationFactory<Program> factory)
+    public ApiVersioningTests(TestWebApplicationFactory<Program> factory)
     {
         _factory = factory;
     }

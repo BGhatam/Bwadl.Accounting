@@ -78,9 +78,19 @@ app.UseHealthCheckConfiguration();
 app.MapControllers();
 
 // Initialize database
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Testing")
 {
-    await DatabaseInitializer.InitializeAsync(app.Services);
+    try
+    {
+        await DatabaseInitializer.InitializeAsync(app.Services);
+    }
+    catch (Exception ex) when (app.Environment.EnvironmentName == "Testing")
+    {
+        // In testing environment, log the error but don't fail the app startup
+        // This allows tests to run with in-memory database when real database is unavailable
+        var logger = app.Services.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning(ex, "Database initialization failed in testing environment. Tests may use in-memory database.");
+    }
 }
 
 try

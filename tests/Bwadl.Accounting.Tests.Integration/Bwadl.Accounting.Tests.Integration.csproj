@@ -21,9 +21,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
     
-    <!-- Optional: Heavy packages - only include when actually needed -->
-    <PackageReference Include="Testcontainers" Version="3.6.0" />
-    <PackageReference Include="PactNet" Version="4.4.0" />
+    <!-- Database Testing - Match Infrastructure project versions exactly -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>

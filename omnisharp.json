@@ -1,5 +1,5 @@
 {
-  "solution": "Bwadl.sln",
+  "solution": "Bwadl.Accounting.sln",
   "enableRoslynAnalyzers": true,
   "enableEditorConfigSupport": true,
   "enableImportCompletion": true,
