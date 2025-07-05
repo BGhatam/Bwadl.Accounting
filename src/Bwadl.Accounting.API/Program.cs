@@ -1,5 +1,6 @@
 using Bwadl.Accounting.Application;
 using Bwadl.Accounting.Infrastructure;
+using Bwadl.Accounting.Infrastructure.Configuration;
 using Bwadl.Accounting.Infrastructure.Data.Seed;
 using Bwadl.Accounting.API.Configuration;
 using Serilog;
@@ -32,6 +33,10 @@ builder.Services.AddHealthCheckConfiguration(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Add JWT Authentication and Authorization
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddCustomAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -49,6 +54,11 @@ if (!app.Environment.IsDevelopment())
 // Add middleware
 app.UseMiddleware<Bwadl.Accounting.API.Middleware.ExceptionHandlingMiddleware>();
 app.UseMiddleware<Bwadl.Accounting.API.Middleware.SecurityHeadersMiddleware>();
+app.UseMiddleware<Bwadl.Accounting.Infrastructure.Middleware.ApiKeyMiddleware>();
+
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseRouting();
 

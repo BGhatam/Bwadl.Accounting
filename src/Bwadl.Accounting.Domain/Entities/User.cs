@@ -50,6 +50,8 @@ public class User : IVersionedEntity
     // Navigation properties
     public User? CreatedByUser { get; private set; }
     public User? UpdatedByUser { get; private set; }
+    public ICollection<UserRole> UserRoles { get; private set; } = new List<UserRole>();
+    public ICollection<ApiKey> ApiKeys { get; private set; } = new List<ApiKey>();
 
     // IVersionedEntity implementation
     public int Version { get; set; }

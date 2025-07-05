@@ -52,8 +52,8 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
         // Arrange
         var client = _factory.CreateClient();
 
-        // Act - No version specified, should default to V1
-        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/users");
+        // Act - Using explicit v1 versioning
+        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/v1/users");
 
         // Assert
         response.Should().NotBeNull();
@@ -70,7 +70,7 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
         var client = _factory.CreateClient();
 
         // Act - Version via query string with pagination
-        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/users?version=1.0&page=1&pageSize=3");
+        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/v1/users?page=1&pageSize=3");
 
         // Assert
         response.Should().NotBeNull();
@@ -86,7 +86,7 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
         client.DefaultRequestHeaders.Add("X-Version", "1.0");
 
         // Act - Version via header with pagination
-        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/users?page=1&pageSize=2");
+        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/v1/users?page=1&pageSize=2");
 
         // Assert
         response.Should().NotBeNull();

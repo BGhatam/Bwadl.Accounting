@@ -16,7 +16,6 @@ namespace Bwadl.Accounting.API.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/users")]
-[Route("api/users")]
 public class UsersController : ControllerBase
 {
     private readonly IMediator _mediator;

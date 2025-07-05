@@ -19,7 +19,7 @@ public class ApiIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     public async Task Get_Users_Should_Return_Success()
     {
         // Act
-        var response = await _client.GetAsync("/api/users");
+        var response = await _client.GetAsync("/api/v1/users");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);

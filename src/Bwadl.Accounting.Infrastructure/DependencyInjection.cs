@@ -58,9 +58,16 @@ public static class DependencyInjection
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
+        services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+        services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
         
         // Domain Services
         services.AddScoped<IPasswordService, PasswordService>();
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IApiKeyService, ApiKeyService>();
+        services.AddScoped<IPermissionService, PermissionService>();
         
         // External Services
         services.AddHttpClient<IEmailService, EnhancedEmailService>();

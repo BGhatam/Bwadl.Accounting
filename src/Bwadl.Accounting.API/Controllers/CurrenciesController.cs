@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Bwadl.Accounting.Application.Features.Currencies.DTOs;
 using Bwadl.Accounting.Application.Features.Currencies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,8 @@ using System.Security.Claims;
 namespace Bwadl.Accounting.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/currencies")]
 [Produces("application/json")]
 public class CurrenciesController : ControllerBase
 {

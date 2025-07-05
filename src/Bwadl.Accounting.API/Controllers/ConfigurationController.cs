@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Bwadl.Accounting.Infrastructure.Configuration;
 using Bwadl.Accounting.Shared.Configuration;
 using Microsoft.AspNetCore.Mvc;
@@ -5,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bwadl.Accounting.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/configuration")]
 public class ConfigurationController : ControllerBase
 {
     private readonly IConfigurationService _configurationService;

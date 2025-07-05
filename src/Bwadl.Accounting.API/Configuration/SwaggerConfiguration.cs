@@ -12,25 +12,15 @@ public static class SwaggerConfiguration
             {
                 Title = "Bwadl API V1",
                 Version = "v1",
-                Description = "Clean Architecture API - Version 1 (Basic CRUD Operations)",
+                Description = "Bwadl Accounting API",
                 Contact = new OpenApiContact
                 {
                     Name = "Development Team",
-                    Email = "dev@bwadl.com"
+                    Email = "balghatam@bwadl.sa"
                 }
             });
 
-            c.SwaggerDoc("v2", new OpenApiInfo
-            {
-                Title = "Bwadl API V2",
-                Version = "v2",
-                Description = "Clean Architecture API - Version 2 (Enhanced with Pagination and Metadata)",
-                Contact = new OpenApiContact
-                {
-                    Name = "Development Team",
-                    Email = "dev@bwadl.com"
-                }
-            });
+
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
@@ -66,7 +56,6 @@ public static class SwaggerConfiguration
         app.UseSwaggerUI(c =>
         {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bwadl API V1");
-            c.SwaggerEndpoint("/swagger/v2/swagger.json", "Bwadl API V2");
             c.RoutePrefix = "swagger"; // Change from empty to swagger
             c.DocumentTitle = "Bwadl API Documentation";
         });
