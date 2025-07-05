@@ -30,16 +30,19 @@ public class MemoryHealthCheck : IHealthCheck
         {
             status = HealthStatus.Unhealthy;
             description = $"Memory usage is critical: {allocated:N0} bytes (>{MaxMemoryBytes:N0})";
+            PrometheusMetrics.HealthCheckStatus.WithLabels("memory").Set(0);
         }
         else if (allocated >= WarningMemoryBytes)
         {
             status = HealthStatus.Degraded;
             description = $"Memory usage is high: {allocated:N0} bytes (>{WarningMemoryBytes:N0})";
+            PrometheusMetrics.HealthCheckStatus.WithLabels("memory").Set(0.5);
         }
         else
         {
             status = HealthStatus.Healthy;
             description = $"Memory usage is normal: {allocated:N0} bytes";
+            PrometheusMetrics.HealthCheckStatus.WithLabels("memory").Set(1);
         }
 
         return Task.FromResult(new HealthCheckResult(status, description, data: data));

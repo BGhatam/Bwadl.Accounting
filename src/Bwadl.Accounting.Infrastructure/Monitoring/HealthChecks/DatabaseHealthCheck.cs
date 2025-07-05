@@ -26,11 +26,16 @@ public class DatabaseHealthCheck : IHealthCheck
                 { "database", _context.Database.GetDbConnection().Database ?? "Unknown" },
                 { "provider", _context.Database.ProviderName ?? "Unknown" }
             };
+
+            // Report metric to Prometheus
+            PrometheusMetrics.HealthCheckStatus.WithLabels("database").Set(1);
             
             return HealthCheckResult.Healthy("Database connection is healthy", data);
         }
         catch (Exception ex)
         {
+            // Report failure metric to Prometheus
+            PrometheusMetrics.HealthCheckStatus.WithLabels("database").Set(0);
             return HealthCheckResult.Unhealthy("Database connection failed", ex);
         }
     }

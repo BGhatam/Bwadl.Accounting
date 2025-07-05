@@ -1,0 +1,308 @@
+{
+  "id": null,
+  "title": "Bwadl API Monitoring Dashboard",
+  "description": "Comprehensive monitoring dashboard for Bwadl Accounting API",
+  "tags": ["bwadl", "api", "dotnet", "monitoring"],
+  "timezone": "browser",
+  "schemaVersion": 30,
+  "version": 1,
+  "refresh": "5s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"]
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "API Health Status",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "up{job=\"bwadl-api\"}",
+            "legendFormat": "API Status",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {"options": {"0": {"text": "DOWN", "color": "red"}}, "type": "value"},
+              {"options": {"1": {"text": "UP", "color": "green"}}, "type": "value"}
+            ],
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "color": {
+              "mode": "thresholds"
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Health Checks Status",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 18, "x": 6, "y": 0},
+        "targets": [
+          {
+            "expr": "bwadl_health_check_status",
+            "legendFormat": "{{check_name}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {"options": {"0": {"text": "UNHEALTHY", "color": "red"}}, "type": "value"},
+              {"options": {"0.5": {"text": "DEGRADED", "color": "orange"}}, "type": "value"},
+              {"options": {"1": {"text": "HEALTHY", "color": "green"}}, "type": "value"}
+            ],
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "orange", "value": 0.5},
+                {"color": "green", "value": 1}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Request Rate (req/sec)",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+        "targets": [
+          {
+            "expr": "rate(http_requests_received_total{job=\"bwadl-api\"}[5m])",
+            "legendFormat": "Total Requests/sec",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(http_requests_received_total{job=\"bwadl-api\",code=~\"2..\"}[5m])",
+            "legendFormat": "2xx Requests/sec",
+            "refId": "B"
+          },
+          {
+            "expr": "rate(http_requests_received_total{job=\"bwadl-api\",code=~\"4..\"}[5m])",
+            "legendFormat": "4xx Requests/sec",
+            "refId": "C"
+          },
+          {
+            "expr": "rate(http_requests_received_total{job=\"bwadl-api\",code=~\"5..\"}[5m])",
+            "legendFormat": "5xx Requests/sec",
+            "refId": "D"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Requests per second",
+            "min": 0
+          },
+          {
+            "show": false
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Response Time (95th percentile)",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"bwadl-api\"}[5m]))",
+            "legendFormat": "95th percentile",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{job=\"bwadl-api\"}[5m]))",
+            "legendFormat": "50th percentile (median)",
+            "refId": "B"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Response time (seconds)",
+            "min": 0
+          },
+          {
+            "show": false
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Memory Usage",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+        "targets": [
+          {
+            "expr": "process_working_set_bytes{job=\"bwadl-api\"} / 1024 / 1024",
+            "legendFormat": "Working Set (MB)",
+            "refId": "A"
+          },
+          {
+            "expr": "dotnet_total_memory_bytes{job=\"bwadl-api\"} / 1024 / 1024",
+            "legendFormat": "GC Total Memory (MB)",
+            "refId": "B"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Memory (MB)",
+            "min": 0
+          },
+          {
+            "show": false
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "CPU Usage",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+        "targets": [
+          {
+            "expr": "rate(process_cpu_seconds_total{job=\"bwadl-api\"}[5m]) * 100",
+            "legendFormat": "CPU Usage (%)",
+            "refId": "A"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "CPU Usage (%)",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "show": false
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Error Rate (%)",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 20},
+        "targets": [
+          {
+            "expr": "(rate(http_requests_received_total{job=\"bwadl-api\",code=~\"5..\"}[5m]) / rate(http_requests_received_total{job=\"bwadl-api\"}[5m])) * 100",
+            "legendFormat": "5xx Error Rate (%)",
+            "refId": "A"
+          },
+          {
+            "expr": "(rate(http_requests_received_total{job=\"bwadl-api\",code=~\"4..\"}[5m]) / rate(http_requests_received_total{job=\"bwadl-api\"}[5m])) * 100",
+            "legendFormat": "4xx Error Rate (%)",
+            "refId": "B"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Error Rate (%)",
+            "min": 0
+          },
+          {
+            "show": false
+          }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [5],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A", "5m", "now"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "last"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "5m",
+          "frequency": "10s",
+          "handler": 1,
+          "name": "High Error Rate Alert",
+          "noDataState": "no_data",
+          "notifications": []
+        }
+      },
+      {
+        "id": 8,
+        "title": "Business Metrics",
+        "type": "stat",
+        "gridPos": {"h": 6, "w": 24, "x": 0, "y": 28},
+        "targets": [
+          {
+            "expr": "bwadl_users_created_total",
+            "legendFormat": "Users Created",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(bwadl_auth_attempts_total[5m])",
+            "legendFormat": "Auth Attempts/sec",
+            "refId": "B"
+          },
+          {
+            "expr": "bwadl_jwt_tokens_generated_total",
+            "legendFormat": "JWT Tokens Generated",
+            "refId": "C"
+          },
+          {
+            "expr": "rate(bwadl_emails_sent_total[5m])",
+            "legendFormat": "Emails Sent/sec",
+            "refId": "D"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "System Resources",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 34},
+        "targets": [
+          {
+            "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+            "legendFormat": "System Memory Usage (%)",
+            "refId": "A"
+          },
+          {
+            "expr": "(node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_free_bytes{mountpoint=\"/\"}) / node_filesystem_size_bytes{mountpoint=\"/\"} * 100",
+            "legendFormat": "Disk Usage (%)",
+            "refId": "B"
+          },
+          {
+            "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+            "legendFormat": "System CPU Usage (%)",
+            "refId": "C"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Usage (%)",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "show": false
+          }
+        ]
+      }
+    ]
+  }

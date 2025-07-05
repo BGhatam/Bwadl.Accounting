@@ -17,6 +17,9 @@ public class SelfHealthCheck : IHealthCheck
             { "working_set", Environment.WorkingSet }
         };
 
+        // Report success metric to Prometheus
+        PrometheusMetrics.HealthCheckStatus.WithLabels("self").Set(1);
+
         return Task.FromResult(HealthCheckResult.Healthy("API is running", data));
     }
 }

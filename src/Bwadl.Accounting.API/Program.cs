@@ -4,6 +4,7 @@ using Bwadl.Accounting.Infrastructure.Configuration;
 using Bwadl.Accounting.Infrastructure.Data.Seed;
 using Bwadl.Accounting.API.Configuration;
 using Serilog;
+using Prometheus;
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -56,7 +57,11 @@ app.UseMiddleware<Bwadl.Accounting.API.Middleware.ExceptionHandlingMiddleware>()
 app.UseMiddleware<Bwadl.Accounting.API.Middleware.SecurityHeadersMiddleware>();
 app.UseMiddleware<Bwadl.Accounting.Infrastructure.Middleware.ApiKeyMiddleware>();
 
-// Add Authentication middleware (before routing)
+// Add Prometheus metrics middleware (before authentication)
+app.UseMetricServer(); // Exposes /metrics endpoint
+app.UseHttpMetrics();  // Collects HTTP metrics
+
+// Add Authentication middleware (after routing)
 app.UseAuthentication();
 
 app.UseRouting();

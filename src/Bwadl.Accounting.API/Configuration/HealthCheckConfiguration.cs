@@ -21,10 +21,10 @@ public static class HealthCheckConfiguration
         {
             options.SetEvaluationTimeInSeconds(15); // More frequent updates
             options.SetMinimumSecondsBetweenFailureNotifications(60);
-            // Configure endpoints for Kubernetes probes
-            options.AddHealthCheckEndpoint("Liveness", "/health/live");
-            options.AddHealthCheckEndpoint("Readiness", "/health/ready");
-            options.AddHealthCheckEndpoint("All Checks", "/health");
+            // Configure endpoints for Kubernetes probes with absolute URLs
+            options.AddHealthCheckEndpoint("Liveness", "http://localhost:5281/health/live");
+            options.AddHealthCheckEndpoint("Readiness", "http://localhost:5281/health/ready");
+            options.AddHealthCheckEndpoint("All Checks", "http://localhost:5281/health");
             options.SetHeaderText("Bwadl API Health Dashboard");
         })
         .AddInMemoryStorage(); // This will reset the storage

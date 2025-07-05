@@ -30,13 +30,19 @@ public class CacheHealthCheck : IHealthCheck
                 { "cache_type", _cacheService.GetType().Name },
                 { "test_successful", retrievedValue == testValue }
             };
+
+            // Report metric to Prometheus
+            var isHealthy = retrievedValue == testValue;
+            PrometheusMetrics.HealthCheckStatus.WithLabels("cache").Set(isHealthy ? 1 : 0);
             
-            return retrievedValue == testValue 
+            return isHealthy 
                 ? HealthCheckResult.Healthy("Cache is healthy", data)
                 : HealthCheckResult.Degraded("Cache is not working properly", data: data);
         }
         catch (Exception ex)
         {
+            // Report failure metric to Prometheus
+            PrometheusMetrics.HealthCheckStatus.WithLabels("cache").Set(0);
             return HealthCheckResult.Unhealthy("Cache connection failed", ex);
         }
     }

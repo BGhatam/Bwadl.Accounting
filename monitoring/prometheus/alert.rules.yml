@@ -1,0 +1,116 @@
+groups:
+  - name: bwadl-api-alerts
+    rules:
+      - alert: APIDown
+        expr: up{job="bwadl-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: bwadl-api
+        annotations:
+          summary: "Bwadl API is down"
+          description: "The Bwadl API has been down for more than 1 minute."
+
+      - alert: HighMemoryUsage
+        expr: (process_working_set_bytes{job="bwadl-api"} / 1024 / 1024) > 500
+        for: 5m
+        labels:
+          severity: warning
+          service: bwadl-api
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 500MB for more than 5 minutes. Current: {{ $value }}MB"
+
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total{job="bwadl-api"}[5m]) * 100 > 80
+        for: 10m
+        labels:
+          severity: warning
+          service: bwadl-api
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 80% for more than 10 minutes. Current: {{ $value }}%"
+
+      - alert: HealthCheckFailed
+        expr: up{job=~"bwadl-health.*"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: bwadl-api
+        annotations:
+          summary: "Health check failed"
+          description: "Health check {{ $labels.job }} is failing for more than 2 minutes."
+
+      - alert: HighRequestRate
+        expr: rate(http_requests_received_total{job="bwadl-api"}[5m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+          service: bwadl-api
+        annotations:
+          summary: "High request rate"
+          description: "Request rate is above 100 requests per second for 5 minutes. Current: {{ $value }} req/sec"
+
+      - alert: HighErrorRate
+        expr: (rate(http_requests_received_total{job="bwadl-api",code=~"5.."}[5m]) / rate(http_requests_received_total{job="bwadl-api"}[5m])) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+          service: bwadl-api
+        annotations:
+          summary: "High error rate"
+          description: "Error rate is above 5% for 5 minutes. Current: {{ $value }}%"
+
+      - alert: SlowResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="bwadl-api"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: bwadl-api
+        annotations:
+          summary: "Slow response time"
+          description: "95th percentile response time is above 2 seconds. Current: {{ $value }}s"
+
+      - alert: DatabaseConnectionFailed
+        expr: bwadl_health_check_status{check_name="database"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: bwadl-api
+          component: database
+        annotations:
+          summary: "Database connection failed"
+          description: "Database health check is failing for more than 1 minute."
+
+      - alert: CacheConnectionFailed
+        expr: bwadl_health_check_status{check_name="cache"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          service: bwadl-api
+          component: cache
+        annotations:
+          summary: "Cache connection failed"
+          description: "Cache health check is failing for more than 2 minutes."
+
+  - name: system-alerts
+    rules:
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"} * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High disk usage"
+          description: "Disk usage is above 85%. Current: {{ $value }}%"
+
+      - alert: HighSystemMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "High system memory usage"
+          description: "System memory usage is above 90%. Current: {{ $value }}%"
