@@ -1,4 +1,5 @@
 using Bwadl.Accounting.Application.Common.Interfaces;
+using Bwadl.Accounting.Shared.Configuration;
 using Bwadl.Accounting.Domain.Interfaces;
 using Bwadl.Accounting.Infrastructure.Caching;
 using Bwadl.Accounting.Infrastructure.Configuration;
@@ -70,7 +71,7 @@ public static class DependencyInjection
         services.AddScoped<IPermissionService, PermissionService>();
         
         // External Services
-        services.AddHttpClient<IEmailService, EnhancedEmailService>();
+        services.AddHttpClient<IEmailService, EmailService>();
         
         // Messaging
         services.AddSingleton<IMessageBus, RabbitMqMessageBus>();

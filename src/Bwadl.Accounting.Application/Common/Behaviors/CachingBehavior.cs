@@ -1,6 +1,8 @@
 using Bwadl.Accounting.Application.Common.Interfaces;
+using Bwadl.Accounting.Shared.Configuration;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace Bwadl.Accounting.Application.Common.Behaviors;
@@ -10,11 +12,16 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
 {
     private readonly ICacheService _cacheService;
     private readonly ILogger<CachingBehavior<TRequest, TResponse>> _logger;
+    private readonly CacheOptions _cacheOptions;
 
-    public CachingBehavior(ICacheService cacheService, ILogger<CachingBehavior<TRequest, TResponse>> logger)
+    public CachingBehavior(
+        ICacheService cacheService, 
+        ILogger<CachingBehavior<TRequest, TResponse>> logger,
+        IOptions<CacheOptions> cacheOptions)
     {
         _cacheService = cacheService;
         _logger = logger;
+        _cacheOptions = cacheOptions.Value;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -40,7 +47,7 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
         
         var response = await next();
         
-        await _cacheService.SetAsync(cacheKey, response, TimeSpan.FromMinutes(15), cancellationToken);
+        await _cacheService.SetAsync(cacheKey, response, TimeSpan.FromMinutes(_cacheOptions.DefaultExpirationMinutes), cancellationToken);
         _logger.LogInformation("Cached response for key: {CacheKey}", cacheKey);
         
         return response;

@@ -1,6 +1,6 @@
 using Bwadl.Accounting.Domain.Entities;
 using Bwadl.Accounting.Domain.Interfaces;
-using Bwadl.Accounting.Domain.Settings;
+using Bwadl.Accounting.Shared.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,12 +12,12 @@ namespace Bwadl.Accounting.Infrastructure.Services;
 
 public class JwtService : IJwtService
 {
-    private readonly JwtSettings _jwtSettings;
+    private readonly JwtOptions _jwtSettings;
     private readonly SymmetricSecurityKey _signingKey;
 
-    public JwtService(IOptions<JwtSettings> jwtSettings)
+    public JwtService(IOptions<SecurityOptions> securityOptions)
     {
-        _jwtSettings = jwtSettings.Value;
+        _jwtSettings = securityOptions.Value.Jwt;
         _signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
     }
 

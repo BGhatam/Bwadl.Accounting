@@ -1,4 +1,4 @@
-using Bwadl.Accounting.Domain.Settings;
+using Bwadl.Accounting.Shared.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -12,15 +12,10 @@ public static class AuthenticationConfiguration
 {
     public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        // Configure JWT settings
-        var jwtSettings = new JwtSettings();
-        configuration.GetSection(JwtSettings.SectionName).Bind(jwtSettings);
-        services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
-
-        // Configure API key settings
-        var apiKeySettings = new ApiKeySettings();
-        configuration.GetSection(ApiKeySettings.SectionName).Bind(apiKeySettings);
-        services.Configure<ApiKeySettings>(configuration.GetSection(ApiKeySettings.SectionName));
+        // Get security options (these are already configured in ConfigurationExtensions)
+        var securityOptions = new SecurityOptions();
+        configuration.GetSection(SecurityOptions.SectionName).Bind(securityOptions);
+        var jwtSettings = securityOptions.Jwt;
 
         // Add JWT authentication
         services.AddAuthentication(options =>

@@ -1,6 +1,6 @@
 using Bwadl.Accounting.Domain.Entities;
 using Bwadl.Accounting.Domain.Interfaces;
-using Bwadl.Accounting.Domain.Settings;
+using Bwadl.Accounting.Shared.Configuration;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,12 +10,12 @@ namespace Bwadl.Accounting.Infrastructure.Services;
 
 public class ApiKeyService : IApiKeyService
 {
-    private readonly ApiKeySettings _settings;
+    private readonly ApiKeyOptions _settings;
     private readonly IApiKeyRepository _apiKeyRepository;
 
-    public ApiKeyService(IOptions<ApiKeySettings> settings, IApiKeyRepository apiKeyRepository)
+    public ApiKeyService(IOptions<SecurityOptions> securityOptions, IApiKeyRepository apiKeyRepository)
     {
-        _settings = settings.Value;
+        _settings = securityOptions.Value.ApiKeys;
         _apiKeyRepository = apiKeyRepository;
     }
 

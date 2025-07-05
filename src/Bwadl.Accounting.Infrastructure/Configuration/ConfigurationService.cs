@@ -60,8 +60,8 @@ public class ConfigurationService : IConfigurationService
     {
         var securityOptions = await GetOptionsAsync<SecurityOptions>(cancellationToken);
         
-        // Retrieve JWT secret from secret manager
-        securityOptions.Jwt.SecretKey = await GetSecretConfigurationAsync("Jwt:SecretKey", cancellationToken);
+        // Retrieve JWT secret from secret manager (updated path)
+        securityOptions.Jwt.SecretKey = await GetSecretConfigurationAsync("Security:Jwt:SecretKey", cancellationToken);
         
         return securityOptions;
     }

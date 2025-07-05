@@ -18,6 +18,8 @@ public static class ConfigurationExtensions
         services.Configure<MessageBusOptions>(configuration.GetSection(MessageBusOptions.SectionName));
         services.Configure<SecurityOptions>(configuration.GetSection(SecurityOptions.SectionName));
         services.Configure<FeatureOptions>(configuration.GetSection(FeatureOptions.SectionName));
+        services.Configure<ResiliencyOptions>(configuration.GetSection(ResiliencyOptions.SectionName));
+        services.Configure<ExternalServiceOptions>(configuration.GetSection(ExternalServiceOptions.SectionName));
         
         return services;
     }

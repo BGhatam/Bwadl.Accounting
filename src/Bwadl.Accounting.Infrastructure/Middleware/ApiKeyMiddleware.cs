@@ -1,5 +1,5 @@
 using Bwadl.Accounting.Domain.Interfaces;
-using Bwadl.Accounting.Domain.Settings;
+using Bwadl.Accounting.Shared.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
@@ -9,12 +9,12 @@ namespace Bwadl.Accounting.Infrastructure.Middleware;
 public class ApiKeyMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ApiKeySettings _settings;
+    private readonly ApiKeyOptions _settings;
 
-    public ApiKeyMiddleware(RequestDelegate next, IOptions<ApiKeySettings> settings)
+    public ApiKeyMiddleware(RequestDelegate next, IOptions<SecurityOptions> securityOptions)
     {
         _next = next;
-        _settings = settings.Value;
+        _settings = securityOptions.Value.ApiKeys;
     }
 
     public async Task InvokeAsync(HttpContext context, IApiKeyService apiKeyService)
