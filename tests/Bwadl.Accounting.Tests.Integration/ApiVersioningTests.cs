@@ -1,5 +1,5 @@
 using Bwadl.Accounting.Application.Common.DTOs;
-using Bwadl.Accounting.API.Models.Responses;
+using Bwadl.Accounting.Application.Features.Users.DTOs;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;
@@ -23,11 +23,11 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
         var client = _factory.CreateClient();
 
         // Act
-        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/v1/users");
+        var response = await client.GetFromJsonAsync<PagedResponse<UserDto>>("/api/v1/users");
 
         // Assert
         response.Should().NotBeNull();
-        response.Should().BeOfType<PagedResponse<UserResponse>>();
+        response.Should().BeOfType<PagedResponse<UserDto>>();
         response!.Data.Should().NotBeNull();
         response.Page.Should().Be(1);
         response.PageSize.Should().Be(10); // Default page size
@@ -53,11 +53,11 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
         var client = _factory.CreateClient();
 
         // Act - Using explicit v1 versioning
-        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/v1/users");
+        var response = await client.GetFromJsonAsync<PagedResponse<UserDto>>("/api/v1/users");
 
         // Assert
         response.Should().NotBeNull();
-        response.Should().BeOfType<PagedResponse<UserResponse>>();
+        response.Should().BeOfType<PagedResponse<UserDto>>();
         response!.Data.Should().NotBeNull();
         response.Page.Should().Be(1);
         response.PageSize.Should().Be(10); // Default page size
@@ -70,11 +70,11 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
         var client = _factory.CreateClient();
 
         // Act - Version via query string with pagination
-        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/v1/users?page=1&pageSize=3");
+        var response = await client.GetFromJsonAsync<PagedResponse<UserDto>>("/api/v1/users?page=1&pageSize=3");
 
         // Assert
         response.Should().NotBeNull();
-        response.Should().BeOfType<PagedResponse<UserResponse>>();
+        response.Should().BeOfType<PagedResponse<UserDto>>();
         response!.PageSize.Should().Be(3);
     }
 
@@ -86,11 +86,11 @@ public class ApiVersioningTests : IClassFixture<WebApplicationFactory<Program>>
         client.DefaultRequestHeaders.Add("X-Version", "1.0");
 
         // Act - Version via header with pagination
-        var response = await client.GetFromJsonAsync<PagedResponse<UserResponse>>("/api/v1/users?page=1&pageSize=2");
+        var response = await client.GetFromJsonAsync<PagedResponse<UserDto>>("/api/v1/users?page=1&pageSize=2");
 
         // Assert
         response.Should().NotBeNull();
-        response.Should().BeOfType<PagedResponse<UserResponse>>();
+        response.Should().BeOfType<PagedResponse<UserDto>>();
         response!.PageSize.Should().Be(2);
     }
 }
