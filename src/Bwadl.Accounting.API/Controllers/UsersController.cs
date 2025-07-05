@@ -1,10 +1,9 @@
 using Asp.Versioning;
-using Bwadl.Accounting.API.Models.Requests;
-using Bwadl.Accounting.API.Models.Responses;
 using Bwadl.Accounting.Application.Common.DTOs;
 using Bwadl.Accounting.Application.Features.Users.Commands.CreateUser;
 using Bwadl.Accounting.Application.Features.Users.Commands.DeleteUser;
 using Bwadl.Accounting.Application.Features.Users.Commands.UpdateUser;
+using Bwadl.Accounting.Application.Features.Users.DTOs;
 using Bwadl.Accounting.Application.Features.Users.Queries.GetAllUsers;
 using Bwadl.Accounting.Application.Features.Users.Queries.GetUser;
 using Bwadl.Accounting.Domain.Exceptions;
@@ -28,7 +27,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResponse<UserResponse>>> GetAllUsers(
+    public async Task<ActionResult<PagedResponse<UserDto>>> GetAllUsers(
         [FromQuery] int page = 1, 
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
@@ -38,31 +37,13 @@ public class UsersController : ControllerBase
         var query = new GetAllUsersQuery();
         var users = await _mediator.Send(query, cancellationToken);
         
-        var response = users.Select(user => new UserResponse(
-            user.Id,
-            user.Email,
-            user.MobileNumber,
-            user.MobileCountryCode,
-            user.IdentityId,
-            user.IdentityType,
-            user.NameEn,
-            user.NameAr,
-            user.Language,
-            user.IsEmailVerified,
-            user.IsMobileVerified,
-            user.IsUserVerified,
-            user.EmailVerifiedAt,
-            user.MobileVerifiedAt,
-            user.UserVerifiedAt,
-            user.CreatedAt,
-            user.UpdatedAt
-        ));
+        var userList = users.ToList();
 
         // Apply pagination
-        var totalCount = response.Count();
-        var pagedUsers = response.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        var totalCount = userList.Count;
+        var pagedUsers = userList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-        var pagedResponse = new PagedResponse<UserResponse>
+        var pagedResponse = new PagedResponse<UserDto>
         {
             Data = pagedUsers,
             Page = page,
@@ -91,30 +72,10 @@ public class UsersController : ControllerBase
             return NotFound($"User with ID {id} not found.");
         }
 
-        var userResponse = new UserResponse(
-            user.Id,
-            user.Email,
-            user.MobileNumber,
-            user.MobileCountryCode,
-            user.IdentityId,
-            user.IdentityType,
-            user.NameEn,
-            user.NameAr,
-            user.Language,
-            user.IsEmailVerified,
-            user.IsMobileVerified,
-            user.IsUserVerified,
-            user.EmailVerifiedAt,
-            user.MobileVerifiedAt,
-            user.UserVerifiedAt,
-            user.CreatedAt,
-            user.UpdatedAt
-        );
-
         // Add enhanced metadata
         var response = new UserDetailResponse
         {
-            User = userResponse,
+            User = user,
             Metadata = new UserMetadata
             {
                 ProfileCompleteness = CalculateProfileCompleteness(user),
@@ -128,7 +89,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserResponse>> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -145,28 +106,8 @@ public class UsersController : ControllerBase
             );
             var user = await _mediator.Send(command, cancellationToken);
 
-            var response = new UserResponse(
-                user.Id,
-                user.Email,
-                user.MobileNumber,
-                user.MobileCountryCode,
-                user.IdentityId,
-                user.IdentityType,
-                user.NameEn,
-                user.NameAr,
-                user.Language,
-                user.IsEmailVerified,
-                user.IsMobileVerified,
-                user.IsUserVerified,
-                user.EmailVerifiedAt,
-                user.MobileVerifiedAt,
-                user.UserVerifiedAt,
-                user.CreatedAt,
-                user.UpdatedAt
-            );
-
             _logger.LogInformation("POST /api/users - User created successfully with ID: {UserId}", user.Id);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, response);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
         catch (DuplicateEmailException ex)
         {
@@ -176,7 +117,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<UserResponse>> UpdateUser(int id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("PUT /api/users/{UserId} - Updating user", id);
 
@@ -195,28 +136,8 @@ public class UsersController : ControllerBase
             );
             var user = await _mediator.Send(command, cancellationToken);
 
-            var response = new UserResponse(
-                user.Id,
-                user.Email,
-                user.MobileNumber,
-                user.MobileCountryCode,
-                user.IdentityId,
-                user.IdentityType,
-                user.NameEn,
-                user.NameAr,
-                user.Language,
-                user.IsEmailVerified,
-                user.IsMobileVerified,
-                user.IsUserVerified,
-                user.EmailVerifiedAt,
-                user.MobileVerifiedAt,
-                user.UserVerifiedAt,
-                user.CreatedAt,
-                user.UpdatedAt
-            );
-
             _logger.LogInformation("PUT /api/users/{UserId} - User updated successfully", id);
-            return Ok(response);
+            return Ok(user);
         }
         catch (UserNotFoundException ex)
         {

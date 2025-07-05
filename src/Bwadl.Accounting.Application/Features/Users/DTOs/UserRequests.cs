@@ -1,13 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Bwadl.Accounting.API.Models.Requests;
+namespace Bwadl.Accounting.Application.Features.Users.DTOs;
 
-/// <summary>
-/// DEPRECATED: This class has been moved to Application layer.
-/// Use Bwadl.Accounting.Application.Features.Users.DTOs.CreateUserRequest instead.
-/// This class will be removed in a future version.
-/// </summary>
-[Obsolete("Use Bwadl.Accounting.Application.Features.Users.DTOs.CreateUserRequest instead. This class will be removed in a future version.")]
 public record CreateUserRequest(
     [EmailAddress][StringLength(255)]
     string? Email,
@@ -37,12 +31,6 @@ public record CreateUserRequest(
     string? Password
 );
 
-/// <summary>
-/// DEPRECATED: This class has been moved to Application layer.
-/// Use Bwadl.Accounting.Application.Features.Users.DTOs.UpdateUserRequest instead.
-/// This class will be removed in a future version.
-/// </summary>
-[Obsolete("Use Bwadl.Accounting.Application.Features.Users.DTOs.UpdateUserRequest instead. This class will be removed in a future version.")]
 public record UpdateUserRequest(
     [EmailAddress][StringLength(255)]
     string? Email,

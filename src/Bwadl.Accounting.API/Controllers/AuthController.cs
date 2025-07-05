@@ -1,6 +1,7 @@
 using Asp.Versioning;
-using Bwadl.Accounting.API.Models.Requests;
-using Bwadl.Accounting.API.Models.Responses;
+using Bwadl.Accounting.Application.Common.DTOs;
+using Bwadl.Accounting.Application.Common.Extensions;
+using Bwadl.Accounting.Application.Features.Auth.DTOs;
 using Bwadl.Accounting.Domain.Entities;
 using Bwadl.Accounting.Domain.Interfaces;
 using Bwadl.Accounting.Domain.ValueObjects;
@@ -87,7 +88,7 @@ public class AuthController : ControllerBase
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
                 ExpiresAt = expiresAt,
-                User = MapUserToResponse(user),
+                User = user.ToDto(),
                 Roles = roles,
                 Permissions = permissions
             };
@@ -167,7 +168,7 @@ public class AuthController : ControllerBase
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
                 ExpiresAt = expiresAt,
-                User = MapUserToResponse(user),
+                User = user.ToDto(),
                 Roles = roles,
                 Permissions = permissions
             };
@@ -272,7 +273,7 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpGet("me")]
     [Authorize]
-    public async Task<ActionResult<UserResponse>> GetCurrentUser()
+    public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
         try
         {
@@ -288,7 +289,7 @@ public class AuthController : ControllerBase
                 return NotFound(new { message = "User not found" });
             }
 
-            return Ok(MapUserToResponse(user));
+            return Ok(user.ToDto());
         }
         catch (Exception ex)
         {
@@ -297,26 +298,4 @@ public class AuthController : ControllerBase
         }
     }
 
-    private static UserResponse MapUserToResponse(User user)
-    {
-        return new UserResponse(
-            Id: user.Id,
-            Email: user.Email,
-            MobileNumber: user.Mobile?.Number,
-            MobileCountryCode: user.Mobile?.CountryCode,
-            IdentityId: user.Identity?.Id,
-            IdentityType: user.Identity?.Type.ToString(),
-            NameEn: user.NameEn,
-            NameAr: user.NameAr,
-            Language: user.Language.ToString(),
-            IsEmailVerified: user.IsEmailVerified,
-            IsMobileVerified: user.IsMobileVerified,
-            IsUserVerified: user.IsUserVerified,
-            EmailVerifiedAt: user.EmailVerifiedAt,
-            MobileVerifiedAt: user.MobileVerifiedAt,
-            UserVerifiedAt: user.UserVerifiedAt,
-            CreatedAt: user.CreatedAt,
-            UpdatedAt: user.UpdatedAt
-        );
-    }
 }

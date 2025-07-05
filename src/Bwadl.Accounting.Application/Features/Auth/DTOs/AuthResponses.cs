@@ -1,27 +1,17 @@
-namespace Bwadl.Accounting.API.Models.Responses;
+using Bwadl.Accounting.Application.Common.DTOs;
 
-/// <summary>
-/// DEPRECATED: This class has been moved to Application layer.
-/// Use Bwadl.Accounting.Application.Features.Auth.DTOs.AuthResponse instead.
-/// This class will be removed in a future version.
-/// </summary>
-[Obsolete("Use Bwadl.Accounting.Application.Features.Auth.DTOs.AuthResponse instead. This class will be removed in a future version.")]
+namespace Bwadl.Accounting.Application.Features.Auth.DTOs;
+
 public class AuthResponse
 {
     public string AccessToken { get; set; } = null!;
     public string RefreshToken { get; set; } = null!;
     public DateTime ExpiresAt { get; set; }
-    public UserResponse User { get; set; } = null!;
+    public UserDto User { get; set; } = null!;
     public IEnumerable<string> Roles { get; set; } = new List<string>();
     public IEnumerable<string> Permissions { get; set; } = new List<string>();
 }
 
-/// <summary>
-/// DEPRECATED: This class has been moved to Application layer.
-/// Use Bwadl.Accounting.Application.Features.Auth.DTOs.TokenValidationResponse instead.
-/// This class will be removed in a future version.
-/// </summary>
-[Obsolete("Use Bwadl.Accounting.Application.Features.Auth.DTOs.TokenValidationResponse instead. This class will be removed in a future version.")]
 public class TokenValidationResponse
 {
     public bool IsValid { get; set; }
@@ -31,12 +21,6 @@ public class TokenValidationResponse
     public DateTime? ExpiresAt { get; set; }
 }
 
-/// <summary>
-/// DEPRECATED: This class has been moved to Application layer.
-/// Use Bwadl.Accounting.Application.Features.Auth.DTOs.ApiKeyResponse instead.
-/// This class will be removed in a future version.
-/// </summary>
-[Obsolete("Use Bwadl.Accounting.Application.Features.Auth.DTOs.ApiKeyResponse instead. This class will be removed in a future version.")]
 public class ApiKeyResponse
 {
     public int Id { get; set; }

@@ -1,13 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Bwadl.Accounting.API.Models.Requests;
+namespace Bwadl.Accounting.Application.Features.Auth.DTOs;
 
-/// <summary>
-/// DEPRECATED: This class has been moved to Application layer.
-/// Use Bwadl.Accounting.Application.Features.Auth.DTOs.LoginRequest instead.
-/// This class will be removed in a future version.
-/// </summary>
-[Obsolete("Use Bwadl.Accounting.Application.Features.Auth.DTOs.LoginRequest instead. This class will be removed in a future version.")]
 public class LoginRequest
 {
     [Required(ErrorMessage = "Username is required")]
@@ -19,12 +13,6 @@ public class LoginRequest
     public bool RememberMe { get; set; } = false;
 }
 
-/// <summary>
-/// DEPRECATED: This class has been moved to Application layer.
-/// Use Bwadl.Accounting.Application.Features.Auth.DTOs.RegisterRequest instead.
-/// This class will be removed in a future version.
-/// </summary>
-[Obsolete("Use Bwadl.Accounting.Application.Features.Auth.DTOs.RegisterRequest instead. This class will be removed in a future version.")]
 public class RegisterRequest
 {
     [EmailAddress(ErrorMessage = "Invalid email format")]
@@ -44,24 +32,12 @@ public class RegisterRequest
     public string? NameAr { get; set; }
 }
 
-/// <summary>
-/// DEPRECATED: This class has been moved to Application layer.
-/// Use Bwadl.Accounting.Application.Features.Auth.DTOs.RefreshTokenRequest instead.
-/// This class will be removed in a future version.
-/// </summary>
-[Obsolete("Use Bwadl.Accounting.Application.Features.Auth.DTOs.RefreshTokenRequest instead. This class will be removed in a future version.")]
 public class RefreshTokenRequest
 {
     [Required(ErrorMessage = "Refresh token is required")]
     public string RefreshToken { get; set; } = null!;
 }
 
-/// <summary>
-/// DEPRECATED: This class has been moved to Application layer.
-/// Use Bwadl.Accounting.Application.Features.Auth.DTOs.ChangePasswordRequest instead.
-/// This class will be removed in a future version.
-/// </summary>
-[Obsolete("Use Bwadl.Accounting.Application.Features.Auth.DTOs.ChangePasswordRequest instead. This class will be removed in a future version.")]
 public class ChangePasswordRequest
 {
     [Required(ErrorMessage = "Current password is required")]
