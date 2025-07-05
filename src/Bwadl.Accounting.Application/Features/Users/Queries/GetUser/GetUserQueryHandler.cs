@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bwadl.Accounting.Application.Common.DTOs;
 using Bwadl.Accounting.Domain.Interfaces;
 using MediatR;
@@ -9,13 +8,11 @@ namespace Bwadl.Accounting.Application.Features.Users.Queries.GetUser;
 public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDto?>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IMapper _mapper;
     private readonly ILogger<GetUserQueryHandler> _logger;
 
-    public GetUserQueryHandler(IUserRepository userRepository, IMapper mapper, ILogger<GetUserQueryHandler> logger)
+    public GetUserQueryHandler(IUserRepository userRepository, ILogger<GetUserQueryHandler> logger)
     {
         _userRepository = userRepository;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -32,6 +29,6 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDto?>
         }
 
         _logger.LogInformation("User found with ID: {UserId}, Display Name: {DisplayName}", user.Id, user.GetDisplayName());
-        return _mapper.Map<UserDto>(user);
+        return user.ToDto();
     }
 }

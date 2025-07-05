@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bwadl.Accounting.Application.Common.DTOs;
 using Bwadl.Accounting.Domain.Entities;
 using Bwadl.Accounting.Domain.Exceptions;
@@ -13,18 +12,15 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserD
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordService _passwordService;
-    private readonly IMapper _mapper;
     private readonly ILogger<CreateUserCommandHandler> _logger;
 
     public CreateUserCommandHandler(
         IUserRepository userRepository, 
         IPasswordService passwordService,
-        IMapper mapper, 
         ILogger<CreateUserCommandHandler> logger)
     {
         _userRepository = userRepository;
         _passwordService = passwordService;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -80,6 +76,6 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserD
         var createdUser = await _userRepository.CreateAsync(user, cancellationToken);
 
         _logger.LogInformation("User created successfully with ID: {UserId}", createdUser.Id);
-        return _mapper.Map<UserDto>(createdUser);
+        return createdUser.ToDto();
     }
 }

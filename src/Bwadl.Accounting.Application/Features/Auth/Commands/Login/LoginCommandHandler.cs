@@ -93,7 +93,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponse>
             AccessToken = accessToken.Token,
             RefreshToken = refreshToken,
             ExpiresAt = accessToken.ExpiresAt,
-            User = user.ToUserDto(),
+            User = user.ToDto(),
             Roles = roles,
             Permissions = permissionNames
         };

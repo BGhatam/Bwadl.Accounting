@@ -26,7 +26,7 @@ public record UserDto(
 // Extension method to convert User entity to UserDto
 public static class UserExtensions
 {
-    public static UserDto ToUserDto(this User user)
+    public static UserDto ToDto(this User user)
     {
         return new UserDto(
             user.Id,
@@ -34,7 +34,7 @@ public static class UserExtensions
             user.Mobile?.Number,
             user.Mobile?.CountryCode,
             user.Identity?.Id,
-            user.Identity?.Type.ToString(),
+            user.Identity?.Type.ToString().ToLowerInvariant(),
             user.NameEn,
             user.NameAr,
             user.Language.ToCode(),

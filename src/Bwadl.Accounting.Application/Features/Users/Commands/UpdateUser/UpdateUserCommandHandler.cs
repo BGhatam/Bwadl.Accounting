@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bwadl.Accounting.Application.Common.DTOs;
 using Bwadl.Accounting.Domain.Exceptions;
 using Bwadl.Accounting.Domain.Interfaces;
@@ -11,13 +10,11 @@ namespace Bwadl.Accounting.Application.Features.Users.Commands.UpdateUser;
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserDto>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IMapper _mapper;
     private readonly ILogger<UpdateUserCommandHandler> _logger;
 
-    public UpdateUserCommandHandler(IUserRepository userRepository, IMapper mapper, ILogger<UpdateUserCommandHandler> logger)
+    public UpdateUserCommandHandler(IUserRepository userRepository, ILogger<UpdateUserCommandHandler> logger)
     {
         _userRepository = userRepository;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -84,6 +81,6 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserD
         await _userRepository.UpdateAsync(user, cancellationToken);
 
         _logger.LogInformation("User {UserId} updated successfully", request.Id);
-        return _mapper.Map<UserDto>(user);
+        return user.ToDto();
     }
 }

@@ -93,7 +93,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthRespo
             AccessToken = accessToken.Token,
             RefreshToken = refreshToken,
             ExpiresAt = accessToken.ExpiresAt,
-            User = createdUser.ToUserDto(),
+            User = createdUser.ToDto(),
             Roles = new List<string>(),
             Permissions = new List<string>()
         };
